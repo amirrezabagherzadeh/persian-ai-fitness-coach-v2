@@ -69,7 +69,7 @@ export function ProgramPage() {
                     );
                   })}
                 </div>
-                <footer><div><Link className="btn ghost" href={`/program/day/${day.id}`}>جزئیات جلسه</Link>{completed ? <span className="completed-workout-button"><Check /> تمرین انجام شد</span> : <Link className="btn primary" href={`/workout/${day.id}`}>شروع تمرین <ArrowLeft /></Link>}</div></footer>
+                <footer><div>{completed ? <span className="completed-workout-button"><Check /> تمرین انجام شد</span> : <Link className="btn primary" href={`/workout/${day.id}`}>شروع تمرین <ArrowLeft /></Link>}</div></footer>
               </article>
             );
           })}
