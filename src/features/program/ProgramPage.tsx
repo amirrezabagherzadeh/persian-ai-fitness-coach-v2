@@ -48,7 +48,7 @@ export function ProgramPage() {
             const completed = activeWeek === 1 && completedDayIds.has(day.id);
             return (
               <article className="training-day-card" key={day.id}>
-                <header><div className="day-index"><span>{String(dayIndex + 1).padStart(2, "0")}</span></div><div><span className="day-weekday">{day.weekday}</span><h2>{day.title}</h2><p>{day.prescriptions.length} حرکت · حدود {day.estimatedMinutes} دقیقه</p></div><span className={`day-status ${completed ? "completed" : ""}`}>{completed ? <><Check /> انجام شد</> : "آماده تمرین"}</span></header>
+                <header><div className="day-index"><span>{String(dayIndex + 1).padStart(2, "0")}</span></div><div><span className="day-weekday">{day.weekday}</span><h2>{day.title}</h2><p>حدود {day.estimatedMinutes} دقیقه</p></div><span className="day-volume"><b>{day.prescriptions.length}</b><span>حرکت</span></span><span className={`day-status ${completed ? "completed" : ""}`}>{completed ? <><Check /> انجام شد</> : "آماده تمرین"}</span></header>
                 <div className="day-exercises">
                   {day.prescriptions.map((item) => {
                     const exercise = exerciseMap.get(item.exerciseId);
@@ -59,7 +59,11 @@ export function ProgramPage() {
                         <span className="exercise-thumb">{media ? <Image src={media.frames[0]} alt="" fill sizes="72px" /> : <Dumbbell />}</span>
                         <span className="exercise-identity"><strong>{exercise.nameFa}</strong><small dir="ltr" lang="en">{exercise.nameEn}</small></span>
                         <span className="exercise-muscle">{muscleLabel(exercise.primaryMuscles[0])}</span>
-                        <span className="exercise-dose"><b>{item.sets} × {item.reps[0]}–{item.reps[1]}</b><small>{item.restSeconds} ثانیه استراحت</small></span>
+                        <span className="exercise-dose" aria-label={`${item.sets} ست، ${item.reps[0]} تا ${item.reps[1]} تکرار، ${item.restSeconds} ثانیه استراحت`}>
+                          <span className="dose-item"><b>{item.sets}</b><small>ست</small></span>
+                          <span className="dose-item"><b>{item.reps[0]}–{item.reps[1]}</b><small>تکرار</small></span>
+                          <span className="dose-item"><b>{item.restSeconds}</b><small>ثانیه استراحت</small></span>
+                        </span>
                         <span className="exercise-play"><Play /></span>
                       </ExerciseDetailsButton>
                     );

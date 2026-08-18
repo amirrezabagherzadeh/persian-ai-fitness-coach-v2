@@ -368,11 +368,14 @@
   .day-weekday { @apply text-xs font-bold text-primary; }
   .training-day-card header h2 { @apply mt-0.5; }
   .training-day-card header p { @apply text-xs text-muted-foreground; }
+  .day-volume { @apply grid min-w-14 shrink-0 justify-items-center rounded-xl border border-primary/25 bg-primary/10 px-3 py-2 text-primary; }
+  .day-volume b { @apply text-2xl leading-none font-black tabular-nums; }
+  .day-volume span { @apply mt-1 text-[10px] font-bold; }
   .day-status { @apply hidden min-h-8 items-center gap-1 rounded-full bg-muted px-3 text-xs text-muted-foreground sm:inline-flex; }
   .day-status.completed { @apply bg-primary/10 text-primary; }
   .day-status svg { @apply size-3.5; }
   .day-exercises { @apply divide-y divide-border; }
-  .program-exercise { @apply grid min-h-20 w-full grid-cols-[56px_minmax(0,1fr)_auto] items-center gap-3 rounded-none px-4 py-3 text-start transition-colors hover:bg-muted/35 sm:grid-cols-[64px_minmax(170px,1.1fr)_minmax(90px,.6fr)_minmax(120px,.7fr)_44px] sm:px-5; }
+  .program-exercise { @apply grid w-full grid-cols-[56px_minmax(0,1fr)_44px] items-center gap-3 rounded-none px-4 py-4 text-start transition-colors hover:bg-muted/35 focus-visible:bg-muted/35 sm:grid-cols-[64px_minmax(150px,1fr)_minmax(90px,.55fr)_minmax(250px,.9fr)_44px] sm:px-5; }
   .exercise-thumb { @apply relative grid size-14 overflow-hidden rounded-lg bg-muted sm:size-16; }
   .exercise-thumb img { @apply object-cover; }
   .exercise-thumb > svg { @apply m-auto size-5; }
@@ -380,9 +383,12 @@
   .exercise-identity strong { @apply text-sm; }
   .exercise-identity small { @apply truncate text-start text-[11px] text-muted-foreground; }
   .exercise-muscle { @apply hidden text-xs text-muted-foreground sm:block; }
-  .exercise-dose { @apply grid justify-items-end gap-0.5 text-xs; }
-  .exercise-dose small { @apply hidden text-[10px] text-muted-foreground sm:block; }
-  .exercise-play { @apply hidden size-10 place-items-center rounded-full border text-primary sm:grid; }
+  .exercise-dose { @apply col-span-full grid grid-cols-3 overflow-hidden rounded-xl border bg-background/50 text-center sm:col-auto; }
+  .dose-item { @apply grid min-h-14 content-center gap-0.5 border-s border-border px-2 first:border-s-0; }
+  .dose-item b { @apply text-lg leading-none font-black tabular-nums text-foreground; }
+  .dose-item small { @apply text-[10px] font-medium text-muted-foreground; }
+  .exercise-play { @apply grid size-10 place-items-center rounded-full border text-primary transition-colors; }
+  .program-exercise:hover .exercise-play, .program-exercise:focus-visible .exercise-play { @apply bg-primary text-primary-foreground; }
   .exercise-play svg { @apply size-4 fill-current; }
   .training-day-card > footer { @apply flex flex-col gap-3 border-t bg-muted/15 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5; }
   .training-day-card footer > span { @apply flex items-center gap-1.5 text-xs text-muted-foreground; }
@@ -396,35 +402,34 @@
   .exercise-title-button > span:first-child { @apply grid gap-0.5; }
   .exercise-title-button small { @apply text-start text-[11px] font-normal text-muted-foreground; }
 
-  .exercise-dialog { @apply border-primary/15; }
-  .exercise-dialog-header { @apply sticky top-0 z-20 border-b bg-popover/95 px-5 py-4 pe-14 backdrop-blur; }
+  .exercise-dialog { @apply overscroll-contain border-primary/15; }
+  .exercise-dialog-header { @apply sticky top-0 z-20 grid gap-1.5 border-b bg-popover/95 px-5 py-5 pe-14 backdrop-blur; }
+  .exercise-dialog-header h2 { @apply text-balance leading-tight; }
+  .exercise-dialog-header p { @apply leading-5; }
   .exercise-frames { @apply relative grid grid-cols-2 gap-0.5 bg-muted p-0.5; }
   .exercise-frames figure { @apply relative m-0 aspect-square overflow-hidden bg-muted sm:aspect-[3/2]; }
   .exercise-frames img { @apply object-cover; }
   .exercise-frames figcaption { @apply absolute bottom-3 start-3 rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground; }
   .frame-arrow { @apply absolute top-1/2 start-1/2 z-10 grid size-10 -translate-y-1/2 translate-x-1/2 place-items-center rounded-full border-2 border-popover bg-primary text-primary-foreground; }
   .frame-arrow svg { @apply size-4; }
-  .exercise-education-grid { @apply grid gap-7 p-5 md:grid-cols-[1fr_.8fr] md:p-7; }
+  .exercise-education-grid { @apply grid gap-8 p-5 md:grid-cols-[1fr_.8fr] md:p-7; }
   .dialog-section-label { @apply text-xs font-bold text-primary; }
-  .execution-guide h3, .muscle-panel h3, .exercise-rationale h3 { @apply mt-1 text-lg; }
+  .execution-guide { @apply grid content-start gap-3; }
+  .execution-guide h3, .muscle-panel h3, .exercise-rationale h3 { @apply mt-1 text-lg leading-7; }
   .execution-guide ol { @apply mt-5 grid list-none gap-3 p-0; counter-reset: exercise-step; }
   .execution-guide li { @apply flex gap-3 text-sm leading-7; counter-increment: exercise-step; }
   .execution-guide li::before { content: counter(exercise-step); @apply grid size-7 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary; }
   .execution-guide .alert { @apply mt-5; }
   .muscle-panel { @apply grid content-start gap-4 rounded-xl border bg-background/50 p-4; }
-  .muscle-map svg { @apply mx-auto w-full max-w-[300px]; }
-  .body-outline { fill: color-mix(in oklab, var(--muted) 80%, transparent); stroke: color-mix(in oklab, var(--foreground) 18%, transparent); stroke-width: 1.5; }
-  .body-outline path:last-child { fill: none; stroke-width: 7; stroke-linecap: round; }
-  .muscle-region { stroke: var(--background); stroke-width: 1.5; transition: opacity 180ms ease; }
-  .muscle-region.inactive { opacity: 0; }
-  .muscle-region.primary { fill: var(--primary); opacity: .94; }
-  .muscle-region.secondary { fill: color-mix(in oklab, var(--primary) 45%, var(--muted)); opacity: .72; }
-  .muscle-map text { fill: var(--muted-foreground); font-family: var(--font-sans); font-size: 9px; }
-  .muscle-legend { @apply flex justify-center gap-4 text-[10px] text-muted-foreground; }
-  .muscle-legend span { @apply inline-flex items-center gap-1.5; }
+  .muscle-map { @apply grid gap-3; }
+  .anatomy-art { @apply overflow-hidden rounded-xl border bg-muted/20 p-3; }
+  .anatomy-art img { @apply mx-auto h-auto w-full max-w-[360px] object-contain; }
+  .muscle-legend { @apply grid gap-2 text-xs text-muted-foreground; }
+  .muscle-legend span { @apply inline-flex items-center gap-1.5 leading-5; }
   .muscle-legend i { @apply size-2.5 rounded-full; }
   .muscle-legend i.primary { @apply bg-primary; }
   .muscle-legend i.secondary { background: color-mix(in oklab, var(--primary) 45%, var(--muted)); }
+  .anatomy-credit { @apply text-[10px] leading-4 text-muted-foreground underline-offset-2 hover:text-primary hover:underline; }
   .muscle-badges { @apply grid gap-3; }
   .muscle-badges > div { @apply flex flex-wrap items-center gap-1.5; }
   .muscle-badges > div > span { @apply ms-auto text-[10px] text-muted-foreground; }
@@ -444,7 +449,7 @@
   .landing-hero { min-height: auto; }
   .landing-copy h1 { font-size: clamp(2.8rem, 15vw, 4rem); }
   .assessment-card { border-radius: 1rem; }
-  .program-exercise .exercise-dose { grid-column: 3; }
+  .program-exercise .exercise-dose { grid-column: 1 / -1; }
   .training-day-card footer > div .btn { flex: 1; }
 }
 
