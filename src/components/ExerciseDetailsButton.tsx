@@ -77,7 +77,7 @@ export function ExerciseDetailsButton({ exercise, profile, className, children }
   const beginnerGuide = beginnerExerciseGuides[exercise.id] ?? { opening: "با وزنه سبک شروع کن و اگر درد تیز یا غیرعادی حس کردی، حرکت را متوقف کن.", steps: exercise.instructions.slice(0, 3) as [string, string, string] };
   return (
     <Dialog>
-      <DialogTrigger asChild><button type="button" className={cn("inline-flex items-center gap-2 rounded-lg text-start outline-none focus-visible:ring-3 focus-visible:ring-ring/50", className ?? "text-sm font-medium text-primary hover:underline")} aria-label={`نمایش آموزش ${exercise.nameFa}`}>{children}</button></DialogTrigger>
+      <DialogTrigger asChild><button type="button" className={cn("rounded-lg text-start outline-none focus-visible:ring-3 focus-visible:ring-ring/50", className ?? "inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline")} aria-label={`نمایش آموزش ${exercise.nameFa}`}>{children}</button></DialogTrigger>
       <DialogContent className="exercise-dialog max-h-[calc(100dvh-1rem)] gap-0 overflow-y-auto p-0 sm:max-w-4xl">
         <DialogHeader className="exercise-dialog-header">
           <div className="flex items-center gap-1.5 text-xs font-semibold text-primary"><Play className="size-3.5" /> راهنمای اجرای حرکت</div>

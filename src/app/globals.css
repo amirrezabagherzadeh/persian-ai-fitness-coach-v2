@@ -383,14 +383,14 @@
   .exercise-identity strong { @apply text-sm; }
   .exercise-identity small { @apply truncate text-start text-[11px] text-muted-foreground; }
   .exercise-muscle { @apply hidden text-xs text-muted-foreground sm:block; }
-  .exercise-dose { @apply col-span-full grid grid-cols-3 overflow-hidden rounded-xl border bg-background/50 text-center sm:col-auto; }
-  .dose-item { @apply grid min-h-14 content-center gap-0.5 border-s border-border px-2 first:border-s-0; }
-  .dose-item b { @apply text-lg leading-none font-black tabular-nums text-foreground; }
-  .dose-item small { @apply text-[10px] font-medium text-muted-foreground; }
+  .exercise-dose { @apply col-span-full grid w-full grid-cols-3 overflow-hidden rounded-xl border bg-background/60 text-center shadow-xs sm:col-auto; }
+  .dose-item { @apply grid min-w-0 min-h-16 content-center justify-items-center gap-1.5 border-s border-border px-2 first:border-s-0; }
+  .dose-item b { @apply block text-xl leading-none font-black tabular-nums text-foreground; unicode-bidi: isolate; }
+  .dose-item small { @apply block min-h-4 text-[10px] leading-4 font-medium text-muted-foreground; }
   .exercise-play { @apply grid size-10 place-items-center rounded-full border text-primary transition-colors; }
   .program-exercise:hover .exercise-play, .program-exercise:focus-visible .exercise-play { @apply bg-primary text-primary-foreground; }
   .exercise-play svg { @apply size-4 fill-current; }
-  .training-day-card > footer { @apply flex flex-col gap-3 border-t bg-muted/15 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5; }
+  .training-day-card > footer { @apply flex justify-end border-t bg-muted/15 p-4 sm:px-5; }
   .training-day-card footer > span { @apply flex items-center gap-1.5 text-xs text-muted-foreground; }
   .training-day-card footer > span svg { @apply size-4; }
   .training-day-card footer > div { @apply flex gap-2; }
@@ -463,7 +463,10 @@
   .landing-hero { min-height: auto; }
   .landing-copy h1 { font-size: clamp(2.8rem, 15vw, 4rem); }
   .assessment-card { border-radius: 1rem; }
-  .program-exercise .exercise-dose { grid-column: 1 / -1; }
+  .program-exercise .exercise-thumb { grid-column: 1; grid-row: 1; }
+  .program-exercise .exercise-identity { grid-column: 2; grid-row: 1; }
+  .program-exercise .exercise-play { grid-column: 3; grid-row: 1; }
+  .program-exercise .exercise-dose { grid-column: 1 / -1; grid-row: 2; }
   .training-day-card footer > div .btn { flex: 1; }
 }
 

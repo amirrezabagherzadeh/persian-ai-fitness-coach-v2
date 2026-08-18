@@ -60,16 +60,16 @@ export function ProgramPage() {
                         <span className="exercise-identity"><strong>{exercise.nameFa}</strong><small dir="ltr" lang="en">{exercise.nameEn}</small></span>
                         <span className="exercise-muscle">{muscleLabel(exercise.primaryMuscles[0])}</span>
                         <span className="exercise-dose" aria-label={`${item.sets} ست، ${item.reps[0]} تا ${item.reps[1]} تکرار، ${item.restSeconds} ثانیه استراحت`}>
-                          <span className="dose-item"><b>{item.sets}</b><small>ست</small></span>
-                          <span className="dose-item"><b>{item.reps[0]}–{item.reps[1]}</b><small>تکرار</small></span>
-                          <span className="dose-item"><b>{item.restSeconds}</b><small>ثانیه استراحت</small></span>
+                          <span className="dose-item"><b dir="ltr">{item.sets}</b><small>ست</small></span>
+                          <span className="dose-item"><b dir="ltr">{item.reps[0]}–{item.reps[1]}</b><small>تکرار</small></span>
+                          <span className="dose-item"><b dir="ltr">{item.restSeconds}</b><small>ثانیه استراحت</small></span>
                         </span>
                         <span className="exercise-play"><Play /></span>
                       </ExerciseDetailsButton>
                     );
                   })}
                 </div>
-                <footer><span><Info /> RIR {day.prescriptions[0]?.rir ?? 2}: یعنی چند تکرار توان بیشتر باقی بماند.</span><div><Link className="btn ghost" href={`/program/day/${day.id}`}>جزئیات جلسه</Link><Link className="btn primary" href={`/workout/${day.id}`}>شروع تمرین <ArrowLeft /></Link></div></footer>
+                <footer><div><Link className="btn ghost" href={`/program/day/${day.id}`}>جزئیات جلسه</Link><Link className="btn primary" href={`/workout/${day.id}`}>شروع تمرین <ArrowLeft /></Link></div></footer>
               </article>
             );
           })}
