@@ -4,8 +4,8 @@ import "@fontsource-variable/vazirmatn/wght.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "مربی هوشمند تمرین و تغذیه",
-  description: "برنامه تمرین، تغذیه و پیگیری روزانه بر اساس شرایط واقعی شما.",
+  title: "Gym Coach | برنامه اختصاصی اعضای باشگاه",
+  description: "برنامه تمرینی چهار هفته‌ای بر اساس هدف، سابقه و روزهای حضور شما در باشگاه؛ همراه آموزش تصویری حرکت‌ها.",
   manifest: "/manifest.webmanifest",
 };
 
@@ -17,7 +17,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fa" dir="rtl" className="dark" suppressHydrationWarning>
+    <html lang="fa" dir="rtl" className="dark" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
         <PwaRegister />
         {children}

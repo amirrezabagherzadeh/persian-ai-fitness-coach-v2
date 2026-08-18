@@ -161,6 +161,293 @@
   .workout-media-card { @apply grid min-h-44 content-end bg-muted; }
 }
 
+@layer components {
+  .app-loading, .onboarding-loading { @apply grid min-h-dvh place-content-center justify-items-center gap-3 text-muted-foreground; }
+  .app-loading .brand-mark, .onboarding-loading svg { @apply size-11; }
+  .demo-sidebar { @apply sticky top-0 hidden h-screen flex-col border-s border-sidebar-border bg-sidebar px-4 py-6 lg:flex; }
+  .demo-sidebar .brand-mark svg, .auth-brand .brand-mark svg { @apply size-5; }
+  .member-card { @apply mt-9 flex items-center gap-3 rounded-xl border bg-muted/30 p-3; }
+  .member-avatar { @apply grid size-10 shrink-0 place-items-center rounded-full bg-primary font-bold text-primary-foreground; }
+  .member-card > div { @apply grid min-w-0 gap-0.5; }
+  .member-card strong { @apply truncate text-sm; }
+  .member-card div span { @apply text-xs text-muted-foreground; }
+  .demo-nav { @apply mt-5 grid gap-1.5; }
+  .demo-nav-link { @apply flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground; }
+  .demo-nav-link svg { @apply size-5; }
+  .demo-nav-link.active { @apply bg-sidebar-accent text-primary; }
+  .sidebar-actions { @apply mt-auto grid gap-1 border-t pt-4; }
+  .sidebar-actions button { @apply flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm text-muted-foreground hover:bg-muted hover:text-foreground; }
+  .sidebar-actions svg { @apply size-4; }
+  .demo-mobile-nav { @apply fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t bg-background/95 px-2 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden; }
+  .demo-mobile-nav a, .demo-mobile-nav button { @apply grid min-h-16 place-items-center content-center gap-1 text-xs text-muted-foreground; }
+  .demo-mobile-nav svg { @apply size-5; }
+  .demo-mobile-nav .active { @apply text-primary; }
+
+  .demo-landing { @apply min-h-dvh overflow-hidden; background-image: radial-gradient(circle at 20% 10%, color-mix(in oklab, var(--primary) 10%, transparent), transparent 25%), linear-gradient(to bottom, transparent, color-mix(in oklab, var(--card) 60%, transparent)); }
+  .landing-nav { @apply relative z-10 mx-auto flex w-full max-w-[1180px] items-center justify-between gap-4 px-5 py-5; }
+  .landing-nav > div { @apply flex items-center gap-2; }
+  .landing-login { @apply hidden min-h-10 items-center px-3 text-sm font-medium text-muted-foreground hover:text-foreground sm:inline-flex; }
+  .landing-hero { @apply relative mx-auto grid min-h-[760px] w-full max-w-[1180px] items-center gap-12 px-5 py-16 lg:grid-cols-[.9fr_1.1fr]; }
+  .landing-copy { @apply relative z-10; }
+  .onboarding-kicker { @apply inline-flex items-center gap-2 text-xs font-bold text-primary; }
+  .onboarding-kicker svg { @apply size-4; }
+  .landing-copy h1 { @apply mt-5 text-5xl leading-[1.12] font-black tracking-tight sm:text-6xl lg:text-7xl; }
+  .landing-copy h1 em { @apply not-italic text-primary; }
+  .landing-copy > p { @apply mt-6 max-w-xl text-lg leading-9 text-muted-foreground; }
+  .landing-actions { @apply mt-8 flex flex-wrap gap-3; }
+  .landing-primary { @apply h-12 px-5 text-base; }
+  .landing-proof { @apply mt-7 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground; }
+  .landing-proof span { @apply inline-flex items-center gap-1.5; }
+  .landing-proof svg { @apply size-4 text-primary; }
+  .program-showcase { @apply relative mx-auto w-full max-w-[530px] overflow-hidden rounded-[2rem] border border-primary/25 bg-card p-5 shadow-2xl sm:p-7; transform: rotate(-2deg); }
+  .showcase-grid { @apply pointer-events-none absolute inset-0 opacity-15; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 28px 28px; }
+  .showcase-top, .showcase-footer { @apply relative flex items-center justify-between gap-4; }
+  .showcase-top > div { @apply grid gap-1; }
+  .showcase-top span, .showcase-label span { @apply text-xs text-muted-foreground; }
+  .showcase-top strong { @apply text-xl; }
+  .showcase-badge { @apply rounded-full bg-primary px-3 py-1.5 font-bold text-primary-foreground!; }
+  .showcase-week { @apply relative my-5 grid grid-cols-7 gap-1 rounded-xl bg-muted/50 p-2; }
+  .showcase-week span { @apply grid aspect-square place-items-center rounded-lg text-xs text-muted-foreground; }
+  .showcase-week span.active { @apply bg-primary font-bold text-primary-foreground; }
+  .showcase-workout { @apply relative overflow-hidden rounded-2xl border bg-background; }
+  .showcase-image { @apply relative aspect-[16/10] overflow-hidden; }
+  .showcase-image img { @apply object-cover; }
+  .showcase-label { @apply grid gap-1 p-4 pb-2; }
+  .showcase-label span { @apply inline-flex items-center gap-1.5; }
+  .showcase-label span svg { @apply size-3.5 text-primary; }
+  .showcase-label strong { @apply text-xl; }
+  .showcase-label small { @apply text-xs text-muted-foreground; }
+  .showcase-prescription { @apply flex items-center gap-2 p-4 pt-2; }
+  .showcase-prescription > span { @apply rounded-lg bg-muted px-3 py-2 text-xs text-muted-foreground; }
+  .showcase-prescription b { @apply text-sm text-foreground; }
+  .showcase-prescription button { @apply me-auto grid size-11 place-items-center rounded-full bg-primary text-primary-foreground; }
+  .showcase-prescription svg { @apply size-4 fill-current; }
+  .showcase-footer { @apply mt-4 rounded-xl bg-primary/10 p-3 text-primary; }
+  .showcase-footer > svg { @apply size-7; }
+  .showcase-footer div { @apply grid flex-1 gap-0.5; }
+  .showcase-footer span { @apply text-xs text-muted-foreground; }
+  .landing-steps { @apply mx-auto w-full max-w-[1180px] px-5 py-24; }
+  .landing-steps header { @apply max-w-2xl; }
+  .landing-steps header span { @apply text-sm font-bold text-primary; }
+  .landing-steps h2 { @apply mt-2 text-3xl font-bold sm:text-4xl; }
+  .steps-grid { @apply mt-10 grid gap-3 md:grid-cols-3; }
+  .steps-grid article { @apply relative min-h-56 overflow-hidden rounded-2xl border bg-card p-6; }
+  .steps-grid article > span { @apply text-5xl font-black text-primary/25; }
+  .steps-grid h3 { @apply mt-8 text-xl; }
+  .steps-grid p { @apply mt-2 text-sm text-muted-foreground; }
+  .landing-safety { @apply mx-auto mb-16 flex w-[calc(100%-2.5rem)] max-w-[1140px] flex-col items-start gap-4 rounded-2xl border border-primary/25 bg-primary/5 p-6 md:flex-row md:items-center; }
+  .landing-safety > svg { @apply size-9 shrink-0 text-primary; }
+  .landing-safety div { @apply flex-1; }
+  .landing-safety p { @apply text-sm text-muted-foreground; }
+
+  .auth-shell { @apply grid min-h-dvh lg:grid-cols-[1.05fr_.95fr]; }
+  .auth-story { @apply relative hidden min-h-dvh flex-col overflow-hidden border-s border-primary/20 bg-card p-10 lg:flex; background-image: radial-gradient(circle at 30% 70%, color-mix(in oklab, var(--primary) 14%, transparent), transparent 35%); }
+  .auth-story::after { content: ""; @apply absolute -bottom-40 -start-32 size-[520px] rounded-full border border-primary/20; box-shadow: 0 0 0 60px color-mix(in oklab, var(--primary) 4%, transparent), 0 0 0 120px color-mix(in oklab, var(--primary) 3%, transparent); }
+  .auth-story-copy { @apply relative z-10 my-auto max-w-xl; }
+  .auth-story-copy h1 { @apply mt-5 text-5xl leading-tight font-black; }
+  .auth-story-copy > p { @apply mt-5 text-lg leading-9 text-muted-foreground; }
+  .auth-story-copy ul { @apply mt-8 grid gap-4 p-0; }
+  .auth-story-copy li { @apply flex items-center gap-3 text-sm; }
+  .auth-story-copy li svg { @apply size-5 rounded-full bg-primary p-1 text-primary-foreground; }
+  .auth-trust { @apply relative z-10 flex items-center gap-2 text-xs text-muted-foreground; }
+  .auth-trust svg { @apply size-4 text-primary; }
+  .auth-form-side { @apply grid min-h-dvh place-items-center px-5 py-10; }
+  .auth-form { @apply grid w-full max-w-md gap-5; }
+  .auth-form-heading { @apply mb-3 flex items-center gap-4; }
+  .auth-icon { @apply grid size-12 place-items-center rounded-xl bg-primary text-primary-foreground; }
+  .auth-icon svg { @apply size-6; }
+  .auth-form-heading p { @apply text-xs font-bold text-primary; }
+  .auth-form-heading h2 { @apply text-3xl; }
+  .password-field { @apply relative; }
+  .password-field button { @apply absolute inset-y-0 end-0 grid w-11 place-items-center text-muted-foreground hover:text-foreground; }
+  .password-field svg { @apply size-4; }
+  .helper-text { @apply text-xs text-muted-foreground; }
+  .form-error { @apply rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-red-300; }
+  .auth-submit { @apply mt-1 min-h-12 w-full gap-2; }
+  .auth-submit svg { @apply size-4; }
+  .auth-switch { @apply text-center text-sm text-muted-foreground; }
+  .auth-switch a { @apply font-bold text-primary hover:underline; }
+
+  .onboarding-shell { @apply min-h-dvh px-4 py-8 sm:px-6; background-image: radial-gradient(circle at 80% 5%, color-mix(in oklab, var(--primary) 8%, transparent), transparent 24%); }
+  .onboarding-frame { @apply mx-auto w-full max-w-5xl; }
+  .onboarding-header { @apply mx-auto mb-7 max-w-3xl text-center; }
+  .onboarding-header .brand { @apply mb-8 justify-center; }
+  .onboarding-header h1 { @apply mt-3 text-3xl font-black sm:text-4xl; }
+  .onboarding-header > p { @apply mx-auto mt-3 max-w-2xl text-sm text-muted-foreground; }
+  .onboarding-step-label { @apply mt-2 flex items-center justify-between text-xs text-muted-foreground; }
+  .onboarding-step-label strong { @apply text-primary; }
+  .assessment-card { @apply rounded-2xl border bg-card p-5 shadow-2xl sm:p-8; }
+  .assessment-section { @apply grid gap-7; }
+  .assessment-section > div:first-child > p { @apply mt-2 text-sm text-muted-foreground; }
+  .section-number { @apply text-xs font-black tracking-[.2em] text-primary; }
+  .assessment-section h2 { @apply mt-2 text-2xl font-bold sm:text-3xl; }
+  .option-grid { @apply grid gap-3 sm:grid-cols-2; }
+  .option-grid-goals { @apply lg:grid-cols-3; }
+  .selection-card { @apply relative grid min-h-24 content-center gap-1 rounded-xl border bg-background/50 p-4 text-start transition-[border-color,background-color,transform] hover:-translate-y-0.5 hover:border-primary/50; }
+  .selection-card strong { @apply text-base; }
+  .selection-card span { @apply text-xs text-muted-foreground; }
+  .selection-card > svg { @apply absolute top-3 end-3 size-5 text-primary; }
+  .selection-card.selected { @apply border-primary bg-primary/10; box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--primary) 45%, transparent); }
+  .style-card { @apply min-h-40; }
+  .style-card > svg { @apply static mb-3 size-7; }
+  .assessment-subsection { @apply grid gap-3 border-t pt-6; }
+  .chip-grid { @apply flex flex-wrap gap-2; }
+  .choice-chip { @apply min-h-11 rounded-full border bg-background px-4 text-sm transition-colors hover:border-primary/50; }
+  .choice-chip.selected { @apply border-primary bg-primary text-primary-foreground; }
+  .choice-chip.danger.selected { @apply border-destructive bg-destructive text-white; }
+  .form-grid { @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-4; }
+  .form-grid.two { @apply lg:grid-cols-2; }
+  .field small { @apply font-normal text-muted-foreground; }
+  .input-with-unit { @apply flex h-11 items-center overflow-hidden rounded-lg border border-input bg-input/30 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/40; }
+  .input-with-unit input { @apply h-full min-w-0 flex-1 bg-transparent px-3 text-sm outline-none; }
+  .input-with-unit b { @apply pe-3 text-xs font-normal text-muted-foreground; }
+  .assessment-card .input, .assessment-card .select { @apply h-11; }
+  .max-field { @apply max-w-sm; }
+  .number-selector { @apply grid grid-cols-5 gap-2; }
+  .number-selector button { @apply grid min-h-20 place-content-center rounded-xl border bg-background text-center text-muted-foreground; }
+  .number-selector strong { @apply text-2xl text-foreground; }
+  .number-selector button.selected { @apply border-primary bg-primary text-primary-foreground; }
+  .number-selector button.selected strong { @apply text-primary-foreground; }
+  .weekday-grid { @apply grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7; }
+  .weekday-grid button { @apply min-h-12 rounded-lg border bg-background text-sm; }
+  .weekday-grid button.selected { @apply border-primary bg-primary/10 font-bold text-primary; }
+  .gym-access-note { @apply flex items-center gap-4 rounded-xl border border-primary/25 bg-primary/5 p-4; }
+  .gym-access-note > svg { @apply size-8 shrink-0 text-primary; }
+  .gym-access-note div { @apply grid gap-1; }
+  .gym-access-note span { @apply text-xs text-muted-foreground; }
+  .review-grid { @apply grid gap-2 sm:grid-cols-4; }
+  .review-grid div { @apply grid gap-1 rounded-lg bg-muted/50 p-3; }
+  .review-grid span { @apply text-xs text-muted-foreground; }
+  .review-grid strong { @apply text-sm; }
+  .safety-copy { @apply rounded-lg border-s-2 border-primary bg-primary/5 p-3 text-xs text-muted-foreground; }
+  .assessment-actions { @apply mt-8 flex items-center justify-between border-t pt-5; }
+  .assessment-actions .btn { @apply min-h-11 px-4; }
+  .assessment-actions svg { @apply size-4; }
+
+  .program-page { @apply pb-10; }
+  .program-hero { @apply relative grid overflow-hidden rounded-2xl border border-primary/20 bg-card p-5 sm:p-8 lg:grid-cols-[1fr_260px]; }
+  .program-hero::before { content: ""; @apply pointer-events-none absolute -top-32 -start-32 size-80 rounded-full bg-primary/10 blur-3xl; }
+  .program-hero-copy { @apply relative z-10 self-center; }
+  .program-hero h1 { @apply mt-3 text-3xl font-black sm:text-5xl; }
+  .program-hero-copy > p { @apply mt-4 max-w-2xl text-sm leading-7 text-muted-foreground; }
+  .program-facts { @apply mt-6 flex flex-wrap gap-2; }
+  .program-facts span { @apply inline-flex min-h-9 items-center gap-1.5 rounded-full border bg-background/60 px-3 text-xs; }
+  .program-facts svg { @apply size-4 text-primary; }
+  .program-cycle { @apply relative z-10 mt-7 grid place-items-center rounded-xl border bg-background/60 p-5 text-center lg:mt-0; }
+  .program-cycle > span { @apply text-xs text-muted-foreground; }
+  .program-cycle > strong { @apply text-3xl; }
+  .program-cycle > small { @apply text-xs text-muted-foreground; }
+  .cycle-ring { @apply mt-4 grid size-28 place-content-center rounded-full border-8 border-primary/20; border-top-color: var(--primary); }
+  .cycle-ring b { @apply text-2xl; }
+  .cycle-ring span { @apply max-w-16 text-[10px] leading-4 text-muted-foreground; }
+  .program-warning { @apply mt-4 flex items-center gap-3 rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm; }
+  .program-warning svg { @apply size-5 shrink-0 text-destructive; }
+  .program-guide { @apply mt-4 flex items-center gap-4 rounded-xl border border-primary/25 bg-primary/5 p-4; }
+  .guide-icon { @apply grid size-11 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground; }
+  .guide-icon svg { @apply size-4 fill-current; }
+  .program-guide div { @apply flex-1; }
+  .program-guide p { @apply text-xs text-muted-foreground; }
+  .program-guide > svg { @apply hidden size-5 text-primary sm:block; }
+  .week-section { @apply mt-8; }
+  .section-heading { @apply flex flex-col justify-between gap-2 sm:flex-row sm:items-end; }
+  .section-heading span { @apply text-xs font-bold text-primary; }
+  .section-heading h2 { @apply mt-1 text-2xl; }
+  .section-heading p { @apply text-xs text-muted-foreground; }
+  .week-tabs { @apply mt-4 grid grid-cols-4 gap-2; }
+  .week-tabs button { @apply relative flex min-h-16 items-center justify-center gap-1 rounded-xl border bg-card text-muted-foreground transition-colors hover:border-primary/50; }
+  .week-tabs button span { @apply text-xs; }
+  .week-tabs button strong { @apply text-lg text-foreground; }
+  .week-tabs button > svg { @apply absolute top-2 end-2 size-3 text-primary; }
+  .week-tabs button.active { @apply border-primary bg-primary text-primary-foreground; }
+  .week-tabs button.active strong { @apply text-primary-foreground; }
+  .training-days { @apply mt-5 grid gap-4; }
+  .training-day-card { @apply overflow-hidden rounded-2xl border bg-card; }
+  .training-day-card > header { @apply flex items-center gap-4 border-b p-4 sm:p-5; }
+  .day-index { @apply grid size-12 shrink-0 place-items-center rounded-xl bg-primary/10 font-black text-primary; }
+  .training-day-card header > div:nth-child(2) { @apply min-w-0 flex-1; }
+  .day-weekday { @apply text-xs font-bold text-primary; }
+  .training-day-card header h2 { @apply mt-0.5; }
+  .training-day-card header p { @apply text-xs text-muted-foreground; }
+  .day-status { @apply hidden min-h-8 items-center gap-1 rounded-full bg-muted px-3 text-xs text-muted-foreground sm:inline-flex; }
+  .day-status.completed { @apply bg-primary/10 text-primary; }
+  .day-status svg { @apply size-3.5; }
+  .day-exercises { @apply divide-y divide-border; }
+  .program-exercise { @apply grid min-h-20 w-full grid-cols-[56px_minmax(0,1fr)_auto] items-center gap-3 rounded-none px-4 py-3 text-start transition-colors hover:bg-muted/35 sm:grid-cols-[64px_minmax(170px,1.1fr)_minmax(90px,.6fr)_minmax(120px,.7fr)_44px] sm:px-5; }
+  .exercise-thumb { @apply relative grid size-14 overflow-hidden rounded-lg bg-muted sm:size-16; }
+  .exercise-thumb img { @apply object-cover; }
+  .exercise-thumb > svg { @apply m-auto size-5; }
+  .exercise-identity { @apply grid min-w-0 gap-0.5; }
+  .exercise-identity strong { @apply text-sm; }
+  .exercise-identity small { @apply truncate text-start text-[11px] text-muted-foreground; }
+  .exercise-muscle { @apply hidden text-xs text-muted-foreground sm:block; }
+  .exercise-dose { @apply grid justify-items-end gap-0.5 text-xs; }
+  .exercise-dose small { @apply hidden text-[10px] text-muted-foreground sm:block; }
+  .exercise-play { @apply hidden size-10 place-items-center rounded-full border text-primary sm:grid; }
+  .exercise-play svg { @apply size-4 fill-current; }
+  .training-day-card > footer { @apply flex flex-col gap-3 border-t bg-muted/15 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5; }
+  .training-day-card footer > span { @apply flex items-center gap-1.5 text-xs text-muted-foreground; }
+  .training-day-card footer > span svg { @apply size-4; }
+  .training-day-card footer > div { @apply flex gap-2; }
+  .back-link { @apply mb-5 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary; }
+  .back-link svg { @apply size-4; }
+  .session-summary { @apply mb-4 flex flex-wrap gap-2; }
+  .session-summary span { @apply inline-flex min-h-9 items-center gap-2 rounded-full border bg-card px-3 text-xs text-muted-foreground; }
+  .session-summary svg { @apply size-4 text-primary; }
+  .exercise-title-button > span:first-child { @apply grid gap-0.5; }
+  .exercise-title-button small { @apply text-start text-[11px] font-normal text-muted-foreground; }
+
+  .exercise-dialog { @apply border-primary/15; }
+  .exercise-dialog-header { @apply sticky top-0 z-20 border-b bg-popover/95 px-5 py-4 pe-14 backdrop-blur; }
+  .exercise-frames { @apply relative grid grid-cols-2 gap-0.5 bg-muted p-0.5; }
+  .exercise-frames figure { @apply relative m-0 aspect-square overflow-hidden bg-muted sm:aspect-[3/2]; }
+  .exercise-frames img { @apply object-cover; }
+  .exercise-frames figcaption { @apply absolute bottom-3 start-3 rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground; }
+  .frame-arrow { @apply absolute top-1/2 start-1/2 z-10 grid size-10 -translate-y-1/2 translate-x-1/2 place-items-center rounded-full border-2 border-popover bg-primary text-primary-foreground; }
+  .frame-arrow svg { @apply size-4; }
+  .exercise-education-grid { @apply grid gap-7 p-5 md:grid-cols-[1fr_.8fr] md:p-7; }
+  .dialog-section-label { @apply text-xs font-bold text-primary; }
+  .execution-guide h3, .muscle-panel h3, .exercise-rationale h3 { @apply mt-1 text-lg; }
+  .execution-guide ol { @apply mt-5 grid list-none gap-3 p-0; counter-reset: exercise-step; }
+  .execution-guide li { @apply flex gap-3 text-sm leading-7; counter-increment: exercise-step; }
+  .execution-guide li::before { content: counter(exercise-step); @apply grid size-7 shrink-0 place-items-center rounded-full bg-primary/10 text-xs font-bold text-primary; }
+  .execution-guide .alert { @apply mt-5; }
+  .muscle-panel { @apply grid content-start gap-4 rounded-xl border bg-background/50 p-4; }
+  .muscle-map svg { @apply mx-auto w-full max-w-[300px]; }
+  .body-outline { fill: color-mix(in oklab, var(--muted) 80%, transparent); stroke: color-mix(in oklab, var(--foreground) 18%, transparent); stroke-width: 1.5; }
+  .body-outline path:last-child { fill: none; stroke-width: 7; stroke-linecap: round; }
+  .muscle-region { stroke: var(--background); stroke-width: 1.5; transition: opacity 180ms ease; }
+  .muscle-region.inactive { opacity: 0; }
+  .muscle-region.primary { fill: var(--primary); opacity: .94; }
+  .muscle-region.secondary { fill: color-mix(in oklab, var(--primary) 45%, var(--muted)); opacity: .72; }
+  .muscle-map text { fill: var(--muted-foreground); font-family: var(--font-sans); font-size: 9px; }
+  .muscle-legend { @apply flex justify-center gap-4 text-[10px] text-muted-foreground; }
+  .muscle-legend span { @apply inline-flex items-center gap-1.5; }
+  .muscle-legend i { @apply size-2.5 rounded-full; }
+  .muscle-legend i.primary { @apply bg-primary; }
+  .muscle-legend i.secondary { background: color-mix(in oklab, var(--primary) 45%, var(--muted)); }
+  .muscle-badges { @apply grid gap-3; }
+  .muscle-badges > div { @apply flex flex-wrap items-center gap-1.5; }
+  .muscle-badges > div > span { @apply ms-auto text-[10px] text-muted-foreground; }
+  .exercise-rationale { @apply mx-5 mb-5 flex items-start gap-4 rounded-xl border border-primary/25 bg-primary/5 p-5 md:mx-7 md:mb-7; }
+  .rationale-icon { @apply grid size-10 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground; }
+  .rationale-icon svg { @apply size-5; }
+  .exercise-rationale div { @apply flex-1; }
+  .exercise-rationale p { @apply mt-2 text-sm text-muted-foreground; }
+  .exercise-rationale > svg { @apply size-5 text-primary; }
+  .exercise-source { @apply flex flex-wrap items-center gap-1 border-t bg-muted/30 px-5 py-3 text-xs text-muted-foreground; }
+  .exercise-source a { @apply inline-flex items-center gap-1 text-primary hover:underline; }
+  .exercise-source a svg { @apply size-3; }
+}
+
+@media (max-width: 639px) {
+  .program-showcase { transform: none; }
+  .landing-hero { min-height: auto; }
+  .landing-copy h1 { font-size: clamp(2.8rem, 15vw, 4rem); }
+  .assessment-card { border-radius: 1rem; }
+  .program-exercise .exercise-dose { grid-column: 3; }
+  .training-day-card footer > div .btn { flex: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     scroll-behavior: auto !important;

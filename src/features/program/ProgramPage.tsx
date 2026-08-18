@@ -1,47 +1,74 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { Play } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, CalendarDays, Check, ChevronLeft, Clock3, Dumbbell, Info, Play, Sparkles, Target } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { PageHeader } from "@/components/PageHeader";
 import { ExerciseDetailsButton } from "@/components/ExerciseDetailsButton";
+import { muscleLabel } from "@/components/MuscleMap";
 import { useAppStore } from "@/store/app-store";
 import { exercises } from "@/data/exercises";
+import { exerciseMedia } from "@/data/exercise-media";
+
+const goalLabels = { fat_loss: "کاهش چربی", muscle_gain: "عضله‌سازی", recomposition: "فرم‌دهی بدن", strength: "افزایش قدرت", general_fitness: "آمادگی عمومی", maintenance: "حفظ وضعیت" };
+const levelLabels = { never: "تازه‌کار", beginner: "مبتدی", intermediate: "متوسط", advanced: "پیشرفته" };
+const dateFormatter = new Intl.DateTimeFormat("fa-IR", { day: "numeric", month: "long" });
 
 export function ProgramPage() {
   const { state } = useAppStore();
-  const find = (id: string) => exercises.find((item) => item.id === id);
+  const [activeWeek, setActiveWeek] = useState(1);
+  const exerciseMap = new Map(exercises.map((exercise) => [exercise.id, exercise]));
+  const completedDayIds = new Set(state.workouts.filter((workout) => workout.completedAt).map((workout) => workout.dayId));
+
   return (
     <AppShell>
-      <div className="page">
-        <PageHeader eyebrow={`نسخه ${state.program.version}`} title="برنامه تمرین" description={`ساختار فعلی: ${state.program.split}${state.program.methodologyTitle ? ` | سبک مربی: ${state.program.methodologyTitle}` : ""}`} />
-        <section className="panel">
-          <h2>چرا این پیشنهاد؟</h2>
-          {state.program.rationale.map((line) => <p className="muted" key={line}>{line}</p>)}
+      <div className="program-page page">
+        <section className="program-hero">
+          <div className="program-hero-copy">
+            <span className="onboarding-kicker"><Sparkles /> برنامه اختصاصی {state.user.name}</span>
+            <h1>چهار هفته برای قوی‌تر شدن</h1>
+            <p>برنامه هر هفته ثابت می‌ماند تا روی تکنیک و پیشرفت واقعی تمرکز کنی. برای دیدن آموزش، روی هر حرکت بزن.</p>
+            <div className="program-facts"><span><Target /> {goalLabels[state.user.goal]}</span><span><Dumbbell /> سطح {levelLabels[state.user.experience]}</span><span><CalendarDays /> {state.user.daysPerWeek} جلسه در هفته</span><span><Clock3 /> حدود {state.user.sessionMinutes} دقیقه</span></div>
+          </div>
+          <div className="program-cycle"><span>دوره فعلی</span><strong>۴ هفته</strong><small>{dateFormatter.format(new Date(state.program.startsAt))} تا {dateFormatter.format(new Date(state.program.endsAt))}</small><div className="cycle-ring"><b>{completedDayIds.size}</b><span>جلسه انجام‌شده</span></div></div>
         </section>
-        <div className="mt-4 grid grid-2">
-          {state.program.days.map((day) => (
-            <article className="light-panel" key={day.id}>
-              <div className="split">
-                <div>
-                  <span className="tag">{day.weekday}</span>
-                  <h2>{day.title}</h2>
+
+        {state.program.safetyNotice ? <div className="program-warning" role="alert"><Info /><span>{state.program.safetyNotice}</span></div> : null}
+
+        <section className="program-guide"><span className="guide-icon"><Play /></span><div><strong>قبل از شروع، اجرای حرکت را ببین</strong><p>نام هر حرکت قابل کلیک است؛ تصویر شروع و پایان، عضلات درگیر و خطاهای رایج را همان‌جا می‌بینی.</p></div><ChevronLeft /></section>
+
+        <section className="week-section">
+          <div className="section-heading"><div><span>تقویم برنامه</span><h2>هفته {activeWeek} از ۴</h2></div><p>حرکت‌ها در تمام چهار هفته یکسان هستند.</p></div>
+          <div className="week-tabs" role="tablist" aria-label="انتخاب هفته">{[1, 2, 3, 4].map((week) => <button type="button" role="tab" aria-selected={activeWeek === week} className={activeWeek === week ? "active" : ""} onClick={() => setActiveWeek(week)} key={week}><span>هفته</span><strong>{week}</strong>{week < activeWeek ? <Check /> : null}</button>)}</div>
+        </section>
+
+        <div className="training-days">
+          {state.program.days.map((day, dayIndex) => {
+            const completed = activeWeek === 1 && completedDayIds.has(day.id);
+            return (
+              <article className="training-day-card" key={day.id}>
+                <header><div className="day-index"><span>{String(dayIndex + 1).padStart(2, "0")}</span></div><div><span className="day-weekday">{day.weekday}</span><h2>{day.title}</h2><p>{day.prescriptions.length} حرکت · حدود {day.estimatedMinutes} دقیقه</p></div><span className={`day-status ${completed ? "completed" : ""}`}>{completed ? <><Check /> انجام شد</> : "آماده تمرین"}</span></header>
+                <div className="day-exercises">
+                  {day.prescriptions.map((item) => {
+                    const exercise = exerciseMap.get(item.exerciseId);
+                    const media = exercise ? exerciseMedia[exercise.id] : undefined;
+                    if (!exercise) return null;
+                    return (
+                      <ExerciseDetailsButton exercise={exercise} profile={state.user} className="program-exercise" key={item.id}>
+                        <span className="exercise-thumb">{media ? <Image src={media.frames[0]} alt="" fill sizes="72px" /> : <Dumbbell />}</span>
+                        <span className="exercise-identity"><strong>{exercise.nameFa}</strong><small dir="ltr" lang="en">{exercise.nameEn}</small></span>
+                        <span className="exercise-muscle">{muscleLabel(exercise.primaryMuscles[0])}</span>
+                        <span className="exercise-dose"><b>{item.sets} × {item.reps[0]}–{item.reps[1]}</b><small>{item.restSeconds} ثانیه استراحت</small></span>
+                        <span className="exercise-play"><Play /></span>
+                      </ExerciseDetailsButton>
+                    );
+                  })}
                 </div>
-                <Link className="btn dark" href={`/program/day/${day.id}`}>باز کردن</Link>
-              </div>
-              {day.prescriptions.slice(0, 5).map((item) => {
-                const exercise = find(item.exerciseId);
-                return exercise ? (
-                <ExerciseDetailsButton exercise={exercise} className="exercise-row exercise-row-button" key={item.id}>
-                  <div className="split">
-                    <span className="exercise-row-name"><Play size={16} aria-hidden="true" /><strong>{exercise.nameFa}</strong></span>
-                    <span>{item.sets} × {item.reps[0]}-{item.reps[1]} @ {item.rir} RIR</span>
-                  </div>
-                </ExerciseDetailsButton>
-                ) : null;
-              })}
-            </article>
-          ))}
+                <footer><span><Info /> RIR {day.prescriptions[0]?.rir ?? 2}: یعنی چند تکرار توان بیشتر باقی بماند.</span><div><Link className="btn ghost" href={`/program/day/${day.id}`}>جزئیات جلسه</Link><Link className="btn primary" href={`/workout/${day.id}`}>شروع تمرین <ArrowLeft /></Link></div></footer>
+              </article>
+            );
+          })}
         </div>
       </div>
     </AppShell>

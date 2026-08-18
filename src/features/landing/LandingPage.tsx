@@ -1,91 +1,42 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Activity, Bell, Dumbbell, Flame, LineChart, Salad, ShieldCheck, Trophy } from "lucide-react";
+import { ArrowLeft, CalendarDays, Check, Dumbbell, Play, ShieldCheck, Sparkles, Target } from "lucide-react";
 
-const benefits = [
-  { title: "تمرین شخصی", text: "ساختار برنامه از قوانین تمرین، تجهیزات و سابقه شما می‌آید؛ نه حدس تصادفی AI.", icon: Dumbbell },
-  { title: "تغذیه قابل اجرا", text: "کالری و ماکرو با فرمول مشخص محاسبه می‌شود و وعده‌ها به غذای واقعی تبدیل می‌شوند.", icon: Salad },
-  { title: "راهنمای امروز", text: "هر روز می‌بینی امروز دقیقاً چه تمرینی، چه وعده‌ای و چه یادآوری داری.", icon: Activity },
-  { title: "پیشرفت قابل فهم", text: "وزن، دور کمر، تمرین، پروتئین و پایبندی هفتگی در یک نگاه.", icon: LineChart },
-  { title: "یادآوری‌ها", text: "تمرین، وعده غذایی، آب و چک‌این هفتگی با معماری آماده اعلان مرورگر.", icon: Bell },
-  { title: "دانش قابل بازبینی", text: "منابع علمی و متدولوژی‌ها فقط پس از تایید مدیر وارد موتور توصیه می‌شوند.", icon: ShieldCheck },
+const steps = [
+  { number: "۰۱", title: "شرایطت را می‌گویی", text: "هدف، سابقه، روزهای تمرین و محدودیت‌های بدنی." },
+  { number: "۰۲", title: "برنامه‌ات ساخته می‌شود", text: "یک دوره چهار هفته‌ای متناسب با زمان حضور تو در باشگاه." },
+  { number: "۰۳", title: "حرکت را درست اجرا می‌کنی", text: "تصویر شروع و پایان، عضلات هدف و نکات اجرای صحیح." },
 ];
 
 export function LandingPage() {
   return (
-    <>
-      <section className="hero">
-        <div className="hero-inner">
-          <div className="grid grid-2 items-center">
-            <div className="hero-copy">
-              <div className="eyebrow">AI Fitness Coach</div>
-              <h1>برنامه‌ای که با بدن و زندگی تو هماهنگ می‌شود.</h1>
-              <p className="text-lg leading-9 text-muted-foreground">
-                تمرین، تغذیه و پیگیری روزانه؛ شخصی‌سازی‌شده بر اساس شرایط واقعی تو.
-              </p>
-              <div className="button-row">
-                <Link className="btn primary" href="/auth/signup">برنامه من را بساز</Link>
-                <Link className="btn secondary" href="/dashboard">دیدن دمو</Link>
-              </div>
-            </div>
-            <div className="rounded-3xl border bg-card p-3.5 shadow-2xl md:-rotate-3">
-              <div className="light-panel min-h-[560px] rounded-3xl">
-                <div className="app-topbar">
-                  <div className="avatar">ج</div>
-                  <div>
-                    <div className="muted-dark">سلام، James</div>
-                    <strong>امروز آماده‌ای؟</strong>
-                  </div>
-                  <Bell size={20} color="var(--accent)" />
-                </div>
-                <div className="pill-search">جستجوی تمرین، غذا یا هدف...</div>
-                <div className="lime-progress-card mt-3.5">
-                  <div className="split">
-                    <div>
-                      <span className="tag">Today Progress</span>
-                      <h2 className="mt-2.5">۷۰٪</h2>
-                    </div>
-                    <Trophy color="var(--accent)" />
-                  </div>
-                  <div className="calorie-ring">
-                    <div className="text-center"><strong>821</strong><div>kcal</div></div>
-                  </div>
-                </div>
-                <div className="category-strip mt-3.5">
-                  <span className="category-chip active"><Flame size={16} />Full Body</span>
-                  <span className="category-chip"><Dumbbell size={16} />Strength</span>
-                  <span className="category-chip"><Salad size={16} />Meal</span>
-                </div>
-                <div className="workout-media-card light-panel mt-3.5">
-                  <span className="tag">تمرین امروز</span>
-                  <h3>Full Body Burn</h3>
-                  <p className="muted-dark">۱۵ دقیقه گرم‌کردن، ۶ حرکت اصلی</p>
-                </div>
-              </div>
-            </div>
+    <main className="demo-landing">
+      <nav className="landing-nav"><Link className="brand" href="/"><span className="brand-mark"><Dumbbell /></span><span>Gym Coach</span></Link><div><Link className="landing-login" href="/auth/login">ورود اعضا</Link><Link className="btn primary" href="/auth/signup">دریافت برنامه</Link></div></nav>
+
+      <section className="landing-hero">
+        <div className="landing-copy">
+          <span className="onboarding-kicker"><Sparkles /> برنامه اختصاصی رایگان اعضای باشگاه</span>
+          <h1>ثبت‌نام کن.<br /><em>برنامه خودت</em> را بگیر.</h1>
+          <p>بر اساس بدن، هدف، سابقه و روزهایی که به باشگاه می‌آیی؛ همراه با آموزش تصویری تمام حرکت‌ها.</p>
+          <div className="landing-actions"><Link className="btn primary landing-primary" href="/auth/signup">ساخت برنامه رایگان <ArrowLeft /></Link><a className="btn ghost" href="#how-it-works"><Play /> چطور کار می‌کند؟</a></div>
+          <div className="landing-proof"><span><Check /> چهار هفته کامل</span><span><Check /> مخصوص باشگاه کامل</span><span><Check /> بدون هزینه برای عضو</span></div>
+        </div>
+
+        <div className="program-showcase" aria-label="پیش‌نمایش برنامه تمرینی">
+          <div className="showcase-grid" aria-hidden="true" />
+          <div className="showcase-top"><div><span>برنامه این ماه</span><strong>قدرت و فرم‌دهی</strong></div><span className="showcase-badge">هفته ۱ از ۴</span></div>
+          <div className="showcase-week">{["ش", "ی", "د", "س", "چ", "پ", "ج"].map((day, index) => <span className={index === 0 || index === 2 || index === 4 ? "active" : ""} key={day + index}>{day}</span>)}</div>
+          <div className="showcase-workout">
+            <div className="showcase-image"><Image src="/exercises/dumbbell-press-0.jpg" alt="پرس سینه دمبل" fill sizes="(max-width: 768px) 85vw, 420px" priority /></div>
+            <div className="showcase-label"><span><CalendarDays /> شنبه · بالاتنه A</span><strong>پرس سینه دمبل</strong><small dir="ltr" lang="en">Dumbbell Bench Press</small></div>
+            <div className="showcase-prescription"><span><b>۳</b> ست</span><span><b>۸–۱۲</b> تکرار</span><button type="button" aria-label="پخش آموزش"><Play /></button></div>
           </div>
+          <div className="showcase-footer"><Target /><div><strong>عضلات هدف</strong><span>سینه · پشت بازو · سرشانه جلویی</span></div></div>
         </div>
       </section>
-      <main className="page px-4 py-11 pb-18">
-        <div className="grid grid-3">
-          {benefits.map((item) => {
-            const Icon = item.icon;
-            return (
-              <article className="panel" key={item.title}>
-                <Icon color="var(--accent)" />
-                <h3>{item.title}</h3>
-                <p className="muted">{item.text}</p>
-              </article>
-            );
-          })}
-        </div>
-        <section className="light-panel mt-5">
-          <h2>سوال‌های رایج</h2>
-          <div className="grid grid-2">
-            <p><strong>آیا AI برنامه را می‌سازد؟</strong><br />محاسبات و ساختار تمرین deterministic است. AI فقط توضیح و مربی‌گری زبانی را کمک می‌کند.</p>
-            <p><strong>آیا جایگزین پزشک است؟</strong><br />خیر. در شرایط پرخطر برنامه محافظه‌کارانه می‌شود و توصیه ارزیابی حرفه‌ای نمایش داده می‌شود.</p>
-          </div>
-        </section>
-      </main>
-    </>
+
+      <section className="landing-steps" id="how-it-works"><header><span>مسیر ساده عضو</span><h2>از ثبت‌نام تا اولین تمرین، در چند دقیقه</h2></header><div className="steps-grid">{steps.map((step) => <article key={step.number}><span>{step.number}</span><h3>{step.title}</h3><p>{step.text}</p></article>)}</div></section>
+      <section className="landing-safety"><ShieldCheck /><div><strong>برنامه با محدودیت‌های تو هماهنگ می‌شود</strong><p>آسیب‌ها و دردهای ثبت‌شده در انتخاب حرکت‌ها لحاظ می‌شوند. این دمو جایگزین ارزیابی پزشکی یا مربی حضوری نیست.</p></div><Link className="btn primary" href="/auth/signup">شروع ارزیابی <ArrowLeft /></Link></section>
+    </main>
   );
 }

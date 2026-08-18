@@ -8,7 +8,10 @@ import { generateTrainingProgram } from "@/domain/training";
 import { generateMealPlan } from "@/domain/meal-plan";
 import { reviewCoachMethodology } from "@/domain/coach-methodology";
 
+type DemoAuthState = { isAuthenticated: boolean; onboardingCompleted: boolean };
+
 export type AppState = {
+  auth: DemoAuthState;
   user: UserProfile;
   program: TrainingProgram;
   mealPlan: MealPlan;
@@ -20,10 +23,12 @@ export type AppState = {
   activeCoachMethodologyId?: string;
 };
 
-const STORAGE_KEY = "persian-gym-coach-state-v1";
+const STORAGE_KEY = "persian-gym-coach-state-v2";
+const LEGACY_STORAGE_KEY = "persian-gym-coach-state-v1";
 
 function initialState(): AppState {
   return {
+    auth: { isAuthenticated: false, onboardingCompleted: false },
     user: demoProfile,
     program: demoProgram,
     mealPlan: demoMealPlan,
@@ -36,15 +41,52 @@ function initialState(): AppState {
   };
 }
 
-function normalizeState(parsed: Partial<AppState>): AppState {
-  const fallback = initialState();
-  const coachMethodologies = parsed.coachMethodologies && parsed.coachMethodologies.length > 0 ? parsed.coachMethodologies : fallback.coachMethodologies;
-  const activeCoachMethodologyId = parsed.activeCoachMethodologyId ?? coachMethodologies.find((methodology) => methodology.active)?.id;
+function normalizeUser(user?: Partial<UserProfile>): UserProfile {
   return {
-    ...fallback,
-    ...parsed,
-    coachMethodologies,
-    activeCoachMethodologyId,
+    ...demoProfile,
+    ...user,
+    role: user?.role ?? "user",
+    armCm: user?.armCm ?? demoProfile.armCm,
+    trainingStyle: user?.trainingStyle ?? "balanced",
+    focusAreas: user?.focusAreas ?? [],
+    injuries: user?.injuries ?? [],
+    injuryNotes: user?.injuryNotes ?? "",
+    equipment: ["commercial_gym"],
+  };
+}
+
+function normalizeState(parsed: Partial<AppState>, isLegacy = false): AppState {
+  const fallback = initialState();
+  const user = normalizeUser(parsed.user);
+  const coachMethodologies = parsed.coachMethodologies?.length ? parsed.coachMethodologies : fallback.coachMethodologies;
+  const activeCoachMethodologyId = parsed.activeCoachMethodologyId ?? coachMethodologies.find((methodology) => methodology.active)?.id;
+  const activeMethodology = coachMethodologies.find((methodology) => methodology.id === activeCoachMethodologyId && methodology.active && methodology.approved);
+  const program = parsed.program?.durationWeeks === 4 ? parsed.program : generateTrainingProgram(user, activeMethodology);
+  return { ...fallback, ...parsed, auth: parsed.auth ?? { isAuthenticated: isLegacy, onboardingCompleted: isLegacy }, user, program, coachMethodologies, activeCoachMethodologyId };
+}
+
+function freshLocalAccount(name: string, email: string): AppState {
+  const user = normalizeUser({
+    ...demoProfile,
+    id: `local-${Date.now()}`,
+    name: name.trim() || "عضو باشگاه",
+    email: email.trim().toLowerCase(),
+    role: "user",
+    focusAreas: [],
+    injuries: [],
+    injuryNotes: "",
+  });
+  return {
+    auth: { isAuthenticated: true, onboardingCompleted: false },
+    user,
+    program: generateTrainingProgram(user, demoCoachMethodology),
+    mealPlan: generateMealPlan(user),
+    foodLogs: [],
+    workouts: [],
+    reminders: [],
+    checkIns: [],
+    coachMethodologies: [demoCoachMethodology],
+    activeCoachMethodologyId: demoCoachMethodology.id,
   };
 }
 
@@ -53,8 +95,17 @@ export function useAppStore() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) setState(normalizeState(JSON.parse(raw) as Partial<AppState>));
+    const current = window.localStorage.getItem(STORAGE_KEY);
+    const legacy = current ? null : window.localStorage.getItem(LEGACY_STORAGE_KEY);
+    const raw = current ?? legacy;
+    if (raw) {
+      try {
+        setState(normalizeState(JSON.parse(raw) as Partial<AppState>, Boolean(legacy)));
+      } catch {
+        window.localStorage.removeItem(STORAGE_KEY);
+        window.localStorage.removeItem(LEGACY_STORAGE_KEY);
+      }
+    }
     setReady(true);
   }, []);
 
@@ -62,44 +113,51 @@ export function useAppStore() {
     if (ready) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }, [ready, state]);
 
+  const commit = (updater: (current: AppState) => AppState) => {
+    setState((current) => {
+      const next = updater(current);
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
+  };
+
   return useMemo(() => ({
     ready,
     state,
-    setUser: (user: UserProfile) =>
-      setState((current) => {
-        const activeMethodology = current.coachMethodologies.find((methodology) => methodology.id === current.activeCoachMethodologyId && methodology.active);
-        const program = generateTrainingProgram(user, activeMethodology);
-        const mealPlan = generateMealPlan(user);
-        return { ...current, user, program, mealPlan };
-      }),
-    resetDemo: () => setState(initialState()),
-    addCoachMethodology: (methodology: CoachMethodology) =>
-      setState((current) => ({ ...current, coachMethodologies: [methodology, ...current.coachMethodologies] })),
-    reviewCoachMethodologyById: (id: string) =>
-      setState((current) => ({ ...current, coachMethodologies: current.coachMethodologies.map((methodology) => methodology.id === id ? reviewCoachMethodology(methodology) : methodology) })),
-    approveCoachMethodology: (id: string) =>
-      setState((current) => ({ ...current, coachMethodologies: current.coachMethodologies.map((methodology) => methodology.id === id ? { ...methodology, approved: true, updatedAt: new Date().toISOString() } : methodology) })),
-    activateCoachMethodology: (id: string) =>
-      setState((current) => {
-        const coachMethodologies = current.coachMethodologies.map((methodology) => ({ ...methodology, active: methodology.id === id }));
-        const activeMethodology = coachMethodologies.find((methodology) => methodology.id === id && methodology.approved);
-        return {
-          ...current,
-          coachMethodologies,
-          activeCoachMethodologyId: id,
-          program: generateTrainingProgram(current.user, activeMethodology),
-        };
-      }),
-    regenerateProgramWithActiveMethodology: () =>
-      setState((current) => {
-        const activeMethodology = current.coachMethodologies.find((methodology) => methodology.id === current.activeCoachMethodologyId && methodology.active && methodology.approved);
-        return { ...current, program: generateTrainingProgram(current.user, activeMethodology) };
-      }),
-    addFoodLog: (log: FoodLog) => setState((current) => ({ ...current, foodLogs: [log, ...current.foodLogs] })),
-    removeFoodLog: (id: string) => setState((current) => ({ ...current, foodLogs: current.foodLogs.filter((log) => log.id !== id) })),
-    addReminder: (reminder: Reminder) => setState((current) => ({ ...current, reminders: [reminder, ...current.reminders] })),
-    toggleReminder: (id: string) => setState((current) => ({ ...current, reminders: current.reminders.map((r) => r.id === id ? { ...r, active: !r.active } : r) })),
-    addWorkout: (workout: WorkoutSession) => setState((current) => ({ ...current, workouts: [workout, ...current.workouts] })),
-    addCheckIn: (checkIn: WeeklyCheckIn) => setState((current) => ({ ...current, checkIns: [...current.checkIns, checkIn] })),
+    createLocalAccount: (name: string, email: string) => commit(() => freshLocalAccount(name, email)),
+    loginLocalAccount: (email: string) => {
+      const matches = state.user.email.toLowerCase() === email.trim().toLowerCase();
+      if (matches) commit((current) => ({ ...current, auth: { ...current.auth, isAuthenticated: true } }));
+      return matches;
+    },
+    completeOnboarding: (user: UserProfile) => commit((current) => {
+      const activeMethodology = current.coachMethodologies.find((methodology) => methodology.id === current.activeCoachMethodologyId && methodology.active && methodology.approved);
+      const completedUser = { ...user, equipment: ["commercial_gym"] as UserProfile["equipment"] };
+      return { ...current, auth: { isAuthenticated: true, onboardingCompleted: true }, user: completedUser, program: generateTrainingProgram(completedUser, activeMethodology), mealPlan: generateMealPlan(completedUser) };
+    }),
+    setUser: (user: UserProfile) => commit((current) => {
+      const activeMethodology = current.coachMethodologies.find((methodology) => methodology.id === current.activeCoachMethodologyId && methodology.active);
+      return { ...current, user, program: generateTrainingProgram(user, activeMethodology), mealPlan: generateMealPlan(user) };
+    }),
+    logout: () => commit((current) => ({ ...current, auth: { ...current.auth, isAuthenticated: false } })),
+    resetDemo: () => commit(() => initialState()),
+    addCoachMethodology: (methodology: CoachMethodology) => commit((current) => ({ ...current, coachMethodologies: [methodology, ...current.coachMethodologies] })),
+    reviewCoachMethodologyById: (id: string) => commit((current) => ({ ...current, coachMethodologies: current.coachMethodologies.map((methodology) => methodology.id === id ? reviewCoachMethodology(methodology) : methodology) })),
+    approveCoachMethodology: (id: string) => commit((current) => ({ ...current, coachMethodologies: current.coachMethodologies.map((methodology) => methodology.id === id ? { ...methodology, approved: true, updatedAt: new Date().toISOString() } : methodology) })),
+    activateCoachMethodology: (id: string) => commit((current) => {
+      const coachMethodologies = current.coachMethodologies.map((methodology) => ({ ...methodology, active: methodology.id === id }));
+      const activeMethodology = coachMethodologies.find((methodology) => methodology.id === id && methodology.approved);
+      return { ...current, coachMethodologies, activeCoachMethodologyId: id, program: generateTrainingProgram(current.user, activeMethodology) };
+    }),
+    regenerateProgramWithActiveMethodology: () => commit((current) => {
+      const activeMethodology = current.coachMethodologies.find((methodology) => methodology.id === current.activeCoachMethodologyId && methodology.active && methodology.approved);
+      return { ...current, program: generateTrainingProgram(current.user, activeMethodology) };
+    }),
+    addFoodLog: (log: FoodLog) => commit((current) => ({ ...current, foodLogs: [log, ...current.foodLogs] })),
+    removeFoodLog: (id: string) => commit((current) => ({ ...current, foodLogs: current.foodLogs.filter((log) => log.id !== id) })),
+    addReminder: (reminder: Reminder) => commit((current) => ({ ...current, reminders: [reminder, ...current.reminders] })),
+    toggleReminder: (id: string) => commit((current) => ({ ...current, reminders: current.reminders.map((reminder) => reminder.id === id ? { ...reminder, active: !reminder.active } : reminder) })),
+    addWorkout: (workout: WorkoutSession) => commit((current) => ({ ...current, workouts: [workout, ...current.workouts] })),
+    addCheckIn: (checkIn: WeeklyCheckIn) => commit((current) => ({ ...current, checkIns: [...current.checkIns, checkIn] })),
   }), [ready, state]);
 }

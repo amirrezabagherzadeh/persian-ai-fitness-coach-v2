@@ -2,6 +2,9 @@ export type Sex = "male" | "female";
 export type Goal = "fat_loss" | "muscle_gain" | "recomposition" | "strength" | "general_fitness" | "maintenance";
 export type Experience = "never" | "beginner" | "intermediate" | "advanced";
 export type ActivityLevel = "sedentary" | "light" | "moderate" | "high" | "very_high";
+export type TrainingStyle = "balanced" | "machines" | "free_weights";
+export type FocusArea = "chest" | "back" | "shoulders" | "arms" | "legs" | "glutes" | "core";
+export type InjuryFlag = "shoulder_pain" | "knee_pain" | "back_pain" | "elbow_pain" | "wrist_pain";
 export type Equipment =
   | "commercial_gym"
   | "dumbbells"
@@ -23,6 +26,9 @@ export type UserProfile = {
   heightCm: number;
   weightKg: number;
   waistCm: number;
+  armCm: number;
+  chestCm?: number;
+  thighCm?: number;
   goal: Goal;
   targetWeightKg?: number;
   experience: Experience;
@@ -32,10 +38,13 @@ export type UserProfile = {
   sessionMinutes: number;
   preferredTime: string;
   equipment: Equipment[];
+  trainingStyle: TrainingStyle;
+  focusAreas: FocusArea[];
   activityLevel: ActivityLevel;
   sleepHours: number;
   stressLevel: number;
-  injuries: string[];
+  injuries: InjuryFlag[];
+  injuryNotes: string;
   medicalFlags: string[];
   dietaryStyle: "omnivore" | "vegetarian" | "vegan" | "other";
   allergies: string[];
@@ -86,6 +95,7 @@ export type TrainingDay = {
   weekday: string;
   focus: string;
   warmup: string;
+  estimatedMinutes: number;
   prescriptions: ExercisePrescription[];
 };
 
@@ -99,6 +109,10 @@ export type TrainingProgram = {
   methodologyTitle?: string;
   days: TrainingDay[];
   rationale: string[];
+  durationWeeks: 4;
+  startsAt: string;
+  endsAt: string;
+  safetyNotice?: string;
   createdAt: string;
 };
 

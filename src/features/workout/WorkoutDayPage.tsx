@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowRight, Clock3, Dumbbell, Play } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { PageHeader } from "@/components/PageHeader";
 import { ExerciseDetailsButton } from "@/components/ExerciseDetailsButton";
@@ -14,7 +15,9 @@ export function WorkoutDayPage({ id }: { id: string }) {
   return (
     <AppShell>
       <div className="page">
-        <PageHeader title={day.title} eyebrow={day.weekday} description={day.warmup} action={<Link className="btn primary" href={`/workout/${day.id}`}>شروع این جلسه</Link>} />
+        <Link className="back-link" href="/program"><ArrowRight /> بازگشت به برنامه چهار هفته‌ای</Link>
+        <PageHeader title={day.title} eyebrow={`${day.weekday} · ${day.prescriptions.length} حرکت`} description={day.warmup} action={<Link className="btn primary" href={`/workout/${day.id}`}><Dumbbell /> شروع این جلسه</Link>} />
+        <div className="session-summary"><span><Clock3 /> حدود {day.estimatedMinutes} دقیقه</span><span><Dumbbell /> باشگاه کامل</span><span><Play /> آموزش تصویری هر حرکت</span></div>
         <section className="light-panel">
           {day.prescriptions.map((item) => {
             const exercise = find(item.exerciseId);
@@ -23,8 +26,8 @@ export function WorkoutDayPage({ id }: { id: string }) {
                 <div className="split">
                   <div>
                     {exercise ? (
-                      <ExerciseDetailsButton exercise={exercise} className="exercise-title-button">
-                        <h3>{item.order}. {exercise.nameFa}</h3><span>دیدن اجرا</span>
+                      <ExerciseDetailsButton exercise={exercise} profile={state.user} className="exercise-title-button">
+                        <span><h3>{item.order}. {exercise.nameFa}</h3><small dir="ltr" lang="en">{exercise.nameEn}</small></span><span>دیدن آموزش</span>
                       </ExerciseDetailsButton>
                     ) : <h3>{item.order}. {item.exerciseId}</h3>}
                     <p className="muted-dark">{exercise?.instructions.join(" ")}</p>

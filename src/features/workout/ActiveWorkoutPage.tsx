@@ -35,8 +35,8 @@ export function ActiveWorkoutPage({ sessionId }: { sessionId: string }) {
                   <div>
                     <span className="tag">حرکت {index + 1} از {prescriptions.length}</span>
                     {exercise ? (
-                      <ExerciseDetailsButton exercise={exercise} className="exercise-title-button">
-                        <h2>{exercise.nameFa}</h2><span>دیدن اجرا</span>
+                      <ExerciseDetailsButton exercise={exercise} profile={state.user} className="exercise-title-button">
+                        <span><h2>{exercise.nameFa}</h2><small dir="ltr" lang="en">{exercise.nameEn}</small></span><span>دیدن آموزش</span>
                       </ExerciseDetailsButton>
                     ) : <h2>{p.exerciseId}</h2>}
                   </div>
