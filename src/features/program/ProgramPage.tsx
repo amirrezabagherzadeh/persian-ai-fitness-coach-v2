@@ -47,7 +47,7 @@ export function ProgramPage() {
           {state.program.days.map((day, dayIndex) => {
             const completed = activeWeek === 1 && completedDayIds.has(day.id);
             return (
-              <article className="training-day-card" key={day.id}>
+              <article className={`training-day-card ${completed ? "completed" : ""}`} key={day.id}>
                 <header><div className="day-index"><span>{String(dayIndex + 1).padStart(2, "0")}</span></div><div><span className="day-weekday">{day.weekday}</span><h2>{day.title}</h2><p>حدود {day.estimatedMinutes} دقیقه</p></div><span className="day-volume"><b>{day.prescriptions.length}</b><span>حرکت</span></span><span className={`day-status ${completed ? "completed" : ""}`}>{completed ? <><Check /> انجام شد</> : "آماده تمرین"}</span></header>
                 <div className="day-exercises">
                   {day.prescriptions.map((item) => {
@@ -69,7 +69,7 @@ export function ProgramPage() {
                     );
                   })}
                 </div>
-                <footer><div><Link className="btn ghost" href={`/program/day/${day.id}`}>جزئیات جلسه</Link><Link className="btn primary" href={`/workout/${day.id}`}>شروع تمرین <ArrowLeft /></Link></div></footer>
+                <footer><div><Link className="btn ghost" href={`/program/day/${day.id}`}>جزئیات جلسه</Link>{completed ? <span className="completed-workout-button"><Check /> تمرین انجام شد</span> : <Link className="btn primary" href={`/workout/${day.id}`}>شروع تمرین <ArrowLeft /></Link>}</div></footer>
               </article>
             );
           })}

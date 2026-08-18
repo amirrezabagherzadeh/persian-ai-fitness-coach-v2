@@ -72,6 +72,15 @@ function AnimationGuide({ src, exerciseName }: { src: string; exerciseName: stri
   );
 }
 
+export function ExerciseMediaPreview({ exercise }: { exercise: Exercise }) {
+  const media = exerciseMedia[exercise.id];
+  if (!media) return null;
+
+  if (media.video) return <VideoGuide src={media.video} poster={media.frames[0]} exerciseName={exercise.nameFa} />;
+  if (media.animation) return <AnimationGuide src={media.animation} exerciseName={exercise.nameFa} />;
+  return <MotionGuide frames={media.frames} exerciseName={exercise.nameFa} />;
+}
+
 export function ExerciseDetailsButton({ exercise, profile, className, children }: { exercise: Exercise; profile?: UserProfile; className?: string; children: React.ReactNode }) {
   const media = exerciseMedia[exercise.id];
   const beginnerGuide = beginnerExerciseGuides[exercise.id] ?? { opening: "با وزنه سبک شروع کن و اگر درد تیز یا غیرعادی حس کردی، حرکت را متوقف کن.", steps: exercise.instructions.slice(0, 3) as [string, string, string] };
@@ -85,7 +94,7 @@ export function ExerciseDetailsButton({ exercise, profile, className, children }
           <DialogDescription className="text-start text-sm" dir="ltr" lang="en">{exercise.nameEn}</DialogDescription>
         </DialogHeader>
 
-        {media ? <div className="exercise-visuals">{media.video ? <VideoGuide src={media.video} poster={media.frames[0]} exerciseName={exercise.nameFa} /> : media.animation ? <AnimationGuide src={media.animation} exerciseName={exercise.nameFa} /> : <MotionGuide frames={media.frames} exerciseName={exercise.nameFa} />}<div className="exercise-frames-block"><div><span className="dialog-section-label">حالت‌های کلیدی حرکت</span><h3>شروع و پایان را مقایسه کن</h3></div><div className="exercise-frames" aria-label={`تصاویر شروع و پایان حرکت ${exercise.nameFa}`}>{media.frames.map((frame, index) => <figure key={frame}><Image src={frame} alt={`${index === 0 ? "حالت شروع" : "حالت پایان"} حرکت ${exercise.nameFa}`} fill sizes="(max-width: 720px) 43vw, 320px" priority /><figcaption>{index === 0 ? "شروع" : "پایان"}</figcaption></figure>)}<span className="frame-arrow"><ArrowLeft /></span></div></div></div> : null}
+        {media ? <div className="exercise-visuals"><ExerciseMediaPreview exercise={exercise} /><div className="exercise-frames-block"><div><span className="dialog-section-label">حالت‌های کلیدی حرکت</span><h3>شروع و پایان را مقایسه کن</h3></div><div className="exercise-frames" aria-label={`تصاویر شروع و پایان حرکت ${exercise.nameFa}`}>{media.frames.map((frame, index) => <figure key={frame}><Image src={frame} alt={`${index === 0 ? "حالت شروع" : "حالت پایان"} حرکت ${exercise.nameFa}`} fill sizes="(max-width: 720px) 43vw, 320px" priority /><figcaption>{index === 0 ? "شروع" : "پایان"}</figcaption></figure>)}<span className="frame-arrow"><ArrowLeft /></span></div></div></div> : null}
 
         <div className="exercise-education-grid">
           <section className="execution-guide"><span className="dialog-section-label">راهنمای ساده برای شروع</span><h3>قدم‌به‌قدم و بدون عجله</h3><p className="beginner-note">{beginnerGuide.opening}</p><ol>{beginnerGuide.steps.map((instruction) => <li key={instruction}><span>{instruction}</span></li>)}</ol>{exercise.commonMistakes.length ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>حواست به این‌ها باشد</AlertTitle><AlertDescription>{exercise.commonMistakes.join("، ")}</AlertDescription></Alert> : null}</section>
