@@ -8,7 +8,11 @@ import { generateTrainingProgram } from "@/domain/training";
 import { generateMealPlan } from "@/domain/meal-plan";
 import { reviewCoachMethodology } from "@/domain/coach-methodology";
 
-type DemoAuthState = { isAuthenticated: boolean; onboardingCompleted: boolean };
+type DemoAuthState = {
+  isAuthenticated: boolean;
+  onboardingCompleted: boolean;
+  account?: { email: string; password: string };
+};
 
 export type AppState = {
   auth: DemoAuthState;
@@ -65,19 +69,20 @@ function normalizeState(parsed: Partial<AppState>, isLegacy = false): AppState {
   return { ...fallback, ...parsed, auth: parsed.auth ?? { isAuthenticated: isLegacy, onboardingCompleted: isLegacy }, user, program, coachMethodologies, activeCoachMethodologyId };
 }
 
-function freshLocalAccount(name: string, email: string): AppState {
+function freshLocalAccount(name: string, email: string, password: string): AppState {
+  const normalizedEmail = email.trim().toLowerCase();
   const user = normalizeUser({
     ...demoProfile,
     id: `local-${Date.now()}`,
     name: name.trim() || "عضو باشگاه",
-    email: email.trim().toLowerCase(),
+    email: normalizedEmail,
     role: "user",
     focusAreas: [],
     injuries: [],
     injuryNotes: "",
   });
   return {
-    auth: { isAuthenticated: true, onboardingCompleted: false },
+    auth: { isAuthenticated: true, onboardingCompleted: false, account: { email: normalizedEmail, password } },
     user,
     program: generateTrainingProgram(user, demoCoachMethodology),
     mealPlan: generateMealPlan(user),
@@ -124,10 +129,22 @@ export function useAppStore() {
   return useMemo(() => ({
     ready,
     state,
-    createLocalAccount: (name: string, email: string) => commit(() => freshLocalAccount(name, email)),
-    loginLocalAccount: (email: string) => {
-      const matches = state.user.email.toLowerCase() === email.trim().toLowerCase();
-      if (matches) commit((current) => ({ ...current, auth: { ...current.auth, isAuthenticated: true } }));
+    createLocalAccount: (name: string, email: string, password: string) => {
+      const next = freshLocalAccount(name, email, password);
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      setState(next);
+    },
+    loginLocalAccount: (email: string, password: string) => {
+      const normalizedEmail = email.trim().toLowerCase();
+      const storedAccount = state.auth.account;
+      const matches = storedAccount
+        ? storedAccount.email === normalizedEmail && storedAccount.password === password
+        : state.user.email.toLowerCase() === normalizedEmail;
+      if (matches) {
+        const next = { ...state, auth: { ...state.auth, isAuthenticated: true } };
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        setState(next);
+      }
       return matches;
     },
     completeOnboarding: (user: UserProfile) => commit((current) => {
