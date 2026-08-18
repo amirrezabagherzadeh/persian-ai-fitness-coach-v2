@@ -9,6 +9,10 @@ import { exercises } from "@/data/exercises";
 import { foods } from "@/data/foods";
 import { knowledgeItems } from "@/data/knowledge";
 import { createCoachMethodology } from "@/domain/coach-methodology";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export function AdminPage() {
   const { state, addCoachMethodology, reviewCoachMethodologyById, approveCoachMethodology, activateCoachMethodology, regenerateProgramWithActiveMethodology } = useAppStore();
@@ -36,26 +40,25 @@ export function AdminPage() {
                   <span className="tag">Coach Methodology</span>
                   <h2>روش برنامه‌نویسی مربی</h2>
                 </div>
-                <button className="btn ghost" onClick={regenerateProgramWithActiveMethodology}>ساخت دوباره برنامه با روش فعال</button>
+                <Button variant="ghost" onClick={regenerateProgramWithActiveMethodology}>ساخت دوباره برنامه با روش فعال</Button>
               </div>
               <div className="grid grid-2">
                 <div className="grid">
-                  <label className="field">نام مربی<input className="input" value={coachName} onChange={(event) => setCoachName(event.target.value)} /></label>
-                  <label className="field">نام متد<input className="input" value={title} onChange={(event) => setTitle(event.target.value)} /></label>
-                  <label className="field">مخاطب هدف<input className="input" value={audience} onChange={(event) => setAudience(event.target.value)} /></label>
-                  <label className="field">توضیح کامل روش مربی<textarea className="textarea" value={rawMethod} onChange={(event) => setRawMethod(event.target.value)} /></label>
+                  <label className="field">نام مربی<Input value={coachName} onChange={(event) => setCoachName(event.target.value)} /></label>
+                  <label className="field">نام متد<Input value={title} onChange={(event) => setTitle(event.target.value)} /></label>
+                  <label className="field">مخاطب هدف<Input value={audience} onChange={(event) => setAudience(event.target.value)} /></label>
+                  <label className="field">توضیح کامل روش مربی<Textarea value={rawMethod} onChange={(event) => setRawMethod(event.target.value)} /></label>
                   <label className="choice selected flex items-center gap-2.5">
-                    <input type="checkbox" checked={wantsAiReview} onChange={(event) => setWantsAiReview(event.target.checked)} />
+                    <Checkbox checked={wantsAiReview} onCheckedChange={(checked) => setWantsAiReview(checked === true)} />
                     AI روش را review و به rules ساختاری تبدیل کند
                   </label>
-                  <button
-                    className="btn dark"
+                  <Button
                     onClick={() => {
                       addCoachMethodology(createCoachMethodology({ coachName, title, audience, rawMethod, wantsAiReview }));
                     }}
                   >
                     اضافه کردن روش مربی
-                  </button>
+                  </Button>
                 </div>
                 <div className="panel">
                   <h3>روش فعال در برنامه فعلی</h3>
@@ -86,9 +89,9 @@ export function AdminPage() {
                     <p className="muted">{methodology.aiReviewSummary ?? "AI review درخواست نشده است. قوانین اولیه مستقیم از متن مربی استخراج شده‌اند."}</p>
                     {methodology.reviewFindings.map((finding) => <p className="muted" key={finding}>• {finding}</p>)}
                     <div className="button-row">
-                      <button className="btn secondary" onClick={() => reviewCoachMethodologyById(methodology.id)}>AI review</button>
-                      <button className="btn secondary" onClick={() => approveCoachMethodology(methodology.id)}>Approve</button>
-                      <button className="btn primary" onClick={() => activateCoachMethodology(methodology.id)} disabled={!methodology.approved}>Activate + regenerate</button>
+                      <Button variant="secondary" onClick={() => reviewCoachMethodologyById(methodology.id)}>AI review</Button>
+                      <Button variant="secondary" onClick={() => approveCoachMethodology(methodology.id)}>Approve</Button>
+                      <Button onClick={() => activateCoachMethodology(methodology.id)} disabled={!methodology.approved}>Activate + regenerate</Button>
                     </div>
                   </article>
                 ))}
@@ -97,12 +100,12 @@ export function AdminPage() {
             <div className="mt-4 grid grid-2">
               <section className="light-panel">
                 <h2>Exercises</h2>
-                <input className="input" placeholder="جستجو..." />
+                <Input placeholder="جستجو..." />
                 {exercises.slice(0, 8).map((exercise) => <div className="exercise-row" key={exercise.id}><div className="split"><strong>{exercise.nameFa}</strong><span className="tag">{exercise.movementPattern}</span></div></div>)}
               </section>
               <section className="light-panel">
                 <h2>Foods</h2>
-                <input className="input" placeholder="جستجو..." />
+                <Input placeholder="جستجو..." />
                 {foods.slice(0, 8).map((food) => <div className="meal-row" key={food.id}><div className="split"><strong>{food.nameFa}</strong><span>{food.calories} kcal</span></div></div>)}
               </section>
               <section className="light-panel">

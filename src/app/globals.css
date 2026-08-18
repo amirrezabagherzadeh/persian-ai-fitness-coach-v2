@@ -301,7 +301,7 @@
   .input-with-unit { @apply flex h-11 items-center overflow-hidden rounded-lg border border-input bg-input/30 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/40; }
   .input-with-unit input { @apply h-full min-w-0 flex-1 bg-transparent px-3 text-sm outline-none; }
   .input-with-unit b { @apply pe-3 text-xs font-normal text-muted-foreground; }
-  .assessment-card .input, .assessment-card .select { @apply h-11; }
+  .assessment-card .input, .assessment-card .select, .assessment-card [data-slot="input"], .assessment-card [data-slot="select-trigger"] { @apply h-11; }
   .max-field { @apply max-w-sm; }
   .number-selector { @apply grid grid-cols-5 gap-2; }
   .number-selector button { @apply grid min-h-20 place-content-center rounded-xl border bg-background text-center text-muted-foreground; }

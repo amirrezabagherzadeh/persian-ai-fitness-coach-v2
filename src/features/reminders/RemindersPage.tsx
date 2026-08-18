@@ -6,6 +6,9 @@ import { PageHeader } from "@/components/PageHeader";
 import { useAppStore } from "@/store/app-store";
 import type { Reminder } from "@/domain/types";
 import { browserNotificationProvider } from "@/lib/notifications/provider";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function RemindersPage() {
   const { state, addReminder, toggleReminder } = useAppStore();
@@ -15,15 +18,15 @@ export function RemindersPage() {
   return (
     <AppShell>
       <div className="page">
-        <PageHeader title="یادآورها" eyebrow="Notification-ready" description="در MVP داخل برنامه و مرورگر آماده است؛ Push native بعداً با همین مدل اضافه می‌شود." action={<button className="btn primary" onClick={() => browserNotificationProvider.requestPermission()}>فعال‌سازی اعلان مرورگر</button>} />
+        <PageHeader title="یادآورها" eyebrow="Notification-ready" description="در MVP داخل برنامه و مرورگر آماده است؛ Push native بعداً با همین مدل اضافه می‌شود." action={<Button onClick={() => browserNotificationProvider.requestPermission()}>فعال‌سازی اعلان مرورگر</Button>} />
         <div className="grid grid-2">
           <section className="light-panel">
             <h2>ساخت یادآور</h2>
             <div className="grid">
-              <label className="field">عنوان<input className="input" value={title} onChange={(e) => setTitle(e.target.value)} /></label>
-              <label className="field">نوع<select className="select" value={type} onChange={(e) => setType(e.target.value as Reminder["type"])}><option value="workout">تمرین</option><option value="meal">وعده</option><option value="water">آب</option><option value="supplement">مکمل</option><option value="weigh_in">وزن‌کشی</option><option value="check_in">چک‌این</option></select></label>
-              <label className="field">زمان<input className="input ltr" type="time" value={time} onChange={(e) => setTime(e.target.value)} /></label>
-              <button className="btn dark" onClick={() => addReminder({ id: `reminder-${Date.now()}`, type, title, day: "هر روز", time, active: true })}>ثبت یادآور</button>
+              <label className="field">عنوان<Input value={title} onChange={(e) => setTitle(e.target.value)} /></label>
+              <label className="field">نوع<Select value={type} onValueChange={(value) => setType(value as Reminder["type"])}><SelectTrigger className="w-full"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="workout">تمرین</SelectItem><SelectItem value="meal">وعده</SelectItem><SelectItem value="water">آب</SelectItem><SelectItem value="supplement">مکمل</SelectItem><SelectItem value="weigh_in">وزن‌کشی</SelectItem><SelectItem value="check_in">چک‌این</SelectItem></SelectContent></Select></label>
+              <label className="field">زمان<Input className="text-left" dir="ltr" type="time" value={time} onChange={(e) => setTime(e.target.value)} /></label>
+              <Button onClick={() => addReminder({ id: `reminder-${Date.now()}`, type, title, day: "هر روز", time, active: true })}>ثبت یادآور</Button>
             </div>
           </section>
           <section className="light-panel">
@@ -32,7 +35,7 @@ export function RemindersPage() {
               <div className="reminder-row" key={reminder.id}>
                 <div className="split">
                   <div><strong>{reminder.title}</strong><p className="muted-dark">{reminder.day} - {reminder.time}</p></div>
-                  <button className="btn ghost" onClick={() => toggleReminder(reminder.id)}>{reminder.active ? "فعال" : "خاموش"}</button>
+                  <Button variant="ghost" onClick={() => toggleReminder(reminder.id)}>{reminder.active ? "فعال" : "خاموش"}</Button>
                 </div>
               </div>
             ))}

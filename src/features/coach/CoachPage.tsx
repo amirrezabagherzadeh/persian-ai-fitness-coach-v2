@@ -5,6 +5,8 @@ import { AppShell } from "@/components/AppShell";
 import { PageHeader } from "@/components/PageHeader";
 import { useAppStore } from "@/store/app-store";
 import { MockAIProvider } from "@/lib/ai/provider";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const provider = new MockAIProvider();
 
@@ -42,8 +44,8 @@ export function CoachPage() {
             ))}
           </div>
           <div className="grid grid-2">
-            <input className="input" value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="سوالت را بنویس..." />
-            <button className="btn primary" onClick={ask} disabled={!question.trim()}>ارسال</button>
+            <Input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="سوالت را بنویس..." />
+            <Button onClick={ask} disabled={!question.trim()}>ارسال</Button>
           </div>
         </section>
       </div>

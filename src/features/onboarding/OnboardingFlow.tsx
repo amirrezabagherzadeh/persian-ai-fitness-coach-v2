@@ -5,7 +5,11 @@ import { useRouter } from "next/navigation";
 import { Activity, CalendarDays, Check, ChevronLeft, ChevronRight, Dumbbell, HeartPulse, LoaderCircle, Ruler, Sparkles, Target } from "lucide-react";
 import type { FocusArea, Goal, InjuryFlag, TrainingStyle, UserProfile } from "@/domain/types";
 import { useAppStore } from "@/store/app-store";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 const goals: { id: Goal; label: string; hint: string }[] = [
   { id: "fat_loss", label: "کاهش چربی", hint: "بدن متناسب‌تر و حفظ عضله" },
@@ -127,14 +131,14 @@ export function OnboardingFlow() {
             <div className="assessment-section">
               <div><span className="section-number">۰۲</span><h2>خط پایه بدن تو</h2><p>این اعداد برای شخصی‌سازی و مقایسه تغییرات آینده استفاده می‌شوند.</p></div>
               <div className="form-grid">
-                <label className="field">سن <input className="input" type="number" min={18} max={90} value={draft.age} onChange={(event) => setDraft({ ...draft, age: Number(event.target.value) })} /></label>
-                <label className="field">جنس زیستی <select className="select" value={draft.sex} onChange={(event) => setDraft({ ...draft, sex: event.target.value as UserProfile["sex"] })}><option value="male">مرد</option><option value="female">زن</option></select></label>
-                <label className="field">قد <span className="input-with-unit"><input type="number" min={130} max={220} value={draft.heightCm} onChange={(event) => setDraft({ ...draft, heightCm: Number(event.target.value) })} /><b>cm</b></span></label>
-                <label className="field">وزن <span className="input-with-unit"><input type="number" min={35} max={250} value={draft.weightKg} onChange={(event) => setDraft({ ...draft, weightKg: Number(event.target.value) })} /><b>kg</b></span></label>
-                <label className="field">دور کمر <span className="input-with-unit"><input type="number" min={40} max={200} value={draft.waistCm} onChange={(event) => setDraft({ ...draft, waistCm: Number(event.target.value) })} /><b>cm</b></span></label>
-                <label className="field">دور بازو <span className="input-with-unit"><input type="number" min={15} max={80} value={draft.armCm} onChange={(event) => setDraft({ ...draft, armCm: Number(event.target.value) })} /><b>cm</b></span></label>
-                <label className="field">دور سینه <small>اختیاری</small><span className="input-with-unit"><input type="number" value={draft.chestCm ?? ""} onChange={(event) => setDraft({ ...draft, chestCm: event.target.value ? Number(event.target.value) : undefined })} /><b>cm</b></span></label>
-                <label className="field">دور ران <small>اختیاری</small><span className="input-with-unit"><input type="number" value={draft.thighCm ?? ""} onChange={(event) => setDraft({ ...draft, thighCm: event.target.value ? Number(event.target.value) : undefined })} /><b>cm</b></span></label>
+                <label className="field">سن <Input type="number" min={18} max={90} value={draft.age} onChange={(event) => setDraft({ ...draft, age: Number(event.target.value) })} /></label>
+                <label className="field">جنس زیستی <Select value={draft.sex} onValueChange={(value) => setDraft({ ...draft, sex: value as UserProfile["sex"] })}><SelectTrigger className="w-full"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="male">مرد</SelectItem><SelectItem value="female">زن</SelectItem></SelectContent></Select></label>
+                <label className="field">قد <span className="input-with-unit"><Input type="number" min={130} max={220} value={draft.heightCm} onChange={(event) => setDraft({ ...draft, heightCm: Number(event.target.value) })} /><b>cm</b></span></label>
+                <label className="field">وزن <span className="input-with-unit"><Input type="number" min={35} max={250} value={draft.weightKg} onChange={(event) => setDraft({ ...draft, weightKg: Number(event.target.value) })} /><b>kg</b></span></label>
+                <label className="field">دور کمر <span className="input-with-unit"><Input type="number" min={40} max={200} value={draft.waistCm} onChange={(event) => setDraft({ ...draft, waistCm: Number(event.target.value) })} /><b>cm</b></span></label>
+                <label className="field">دور بازو <span className="input-with-unit"><Input type="number" min={15} max={80} value={draft.armCm} onChange={(event) => setDraft({ ...draft, armCm: Number(event.target.value) })} /><b>cm</b></span></label>
+                <label className="field">دور سینه <small>اختیاری</small><span className="input-with-unit"><Input type="number" value={draft.chestCm ?? ""} onChange={(event) => setDraft({ ...draft, chestCm: event.target.value ? Number(event.target.value) : undefined })} /><b>cm</b></span></label>
+                <label className="field">دور ران <small>اختیاری</small><span className="input-with-unit"><Input type="number" value={draft.thighCm ?? ""} onChange={(event) => setDraft({ ...draft, thighCm: event.target.value ? Number(event.target.value) : undefined })} /><b>cm</b></span></label>
               </div>
             </div>
           ) : null}
@@ -145,7 +149,7 @@ export function OnboardingFlow() {
               <div className="option-grid">
                 {([{"id":"never","label":"تازه شروع می‌کنم","hint":"سابقه منظم ندارم"},{"id":"beginner","label":"مبتدی","hint":"کمتر از ۶ ماه"},{"id":"intermediate","label":"متوسط","hint":"۶ ماه تا ۲ سال"},{"id":"advanced","label":"پیشرفته","hint":"بیشتر از ۲ سال"}] as const).map((level) => <button type="button" aria-pressed={draft.experience === level.id} className={`selection-card ${draft.experience === level.id ? "selected" : ""}`} onClick={() => setDraft({ ...draft, experience: level.id })} key={level.id}><strong>{level.label}</strong><span>{level.hint}</span></button>)}
               </div>
-              <label className="field max-field">چند ماه تمرین منظم داشته‌ای؟ <input className="input" type="number" min={0} max={360} value={draft.trainingMonths} onChange={(event) => setDraft({ ...draft, trainingMonths: Number(event.target.value) })} /></label>
+              <label className="field max-field">چند ماه تمرین منظم داشته‌ای؟ <Input type="number" min={0} max={360} value={draft.trainingMonths} onChange={(event) => setDraft({ ...draft, trainingMonths: Number(event.target.value) })} /></label>
             </div>
           ) : null}
 
@@ -154,7 +158,7 @@ export function OnboardingFlow() {
               <div><span className="section-number">۰۴</span><h2>برنامه هفتگی تو</h2><p>تعداد جلسات را انتخاب کن؛ بعد همان تعداد روز را مشخص کن.</p></div>
               <div className="number-selector">{[2, 3, 4, 5, 6].map((count) => <button type="button" aria-pressed={draft.daysPerWeek === count} className={draft.daysPerWeek === count ? "selected" : ""} onClick={() => setDraft((current) => ({ ...current, daysPerWeek: count, preferredDays: current.preferredDays.slice(0, count) }))} key={count}><strong>{count}</strong><span>روز</span></button>)}</div>
               <div className="assessment-subsection"><h3>روزهای تمرین</h3><div className="weekday-grid">{weekDays.map((day) => <button type="button" aria-pressed={draft.preferredDays.includes(day)} className={draft.preferredDays.includes(day) ? "selected" : ""} onClick={() => toggleDay(day)} key={day}>{day}</button>)}</div><span className="helper-text">{draft.preferredDays.length} از {draft.daysPerWeek} روز انتخاب شده</span></div>
-              <div className="form-grid two"><label className="field">مدت هر جلسه <select className="select" value={draft.sessionMinutes} onChange={(event) => setDraft({ ...draft, sessionMinutes: Number(event.target.value) })}>{[30,45,60,75,90].map((minute) => <option value={minute} key={minute}>{minute} دقیقه</option>)}</select></label><label className="field">زمان ترجیحی <input className="input" type="time" value={draft.preferredTime} onChange={(event) => setDraft({ ...draft, preferredTime: event.target.value })} /></label></div>
+              <div className="form-grid two"><label className="field">مدت هر جلسه <Select value={String(draft.sessionMinutes)} onValueChange={(value) => setDraft({ ...draft, sessionMinutes: Number(value) })}><SelectTrigger className="w-full"><SelectValue /></SelectTrigger><SelectContent>{[30,45,60,75,90].map((minute) => <SelectItem value={String(minute)} key={minute}>{minute} دقیقه</SelectItem>)}</SelectContent></Select></label><label className="field">زمان ترجیحی <Input type="time" value={draft.preferredTime} onChange={(event) => setDraft({ ...draft, preferredTime: event.target.value })} /></label></div>
             </div>
           ) : null}
 
@@ -171,7 +175,7 @@ export function OnboardingFlow() {
               <div><span className="section-number">۰۶</span><h2>ایمنی و مرور نهایی</h2><p>اگر دردی داری مشخص کن تا حرکات نامناسب از برنامه حذف شوند.</p></div>
               <div className="assessment-subsection"><h3>آیا در این ناحیه درد یا آسیب فعلی داری؟</h3><div className="chip-grid">{injuryOptions.map((injury) => <button type="button" aria-pressed={draft.injuries.includes(injury.id)} className={`choice-chip danger ${draft.injuries.includes(injury.id) ? "selected" : ""}`} onClick={() => toggleInjury(injury.id)} key={injury.id}>{injury.label}</button>)}</div></div>
               <div className="assessment-subsection"><h3>آیا پزشک برای تمرین سنگین محدودیتی تعیین کرده است؟</h3><div className="chip-grid"><button type="button" aria-pressed={draft.medicalFlags.length === 0} className={`choice-chip ${draft.medicalFlags.length === 0 ? "selected" : ""}`} onClick={() => setDraft({ ...draft, medicalFlags: [] })}>خیر</button><button type="button" aria-pressed={draft.medicalFlags.length > 0} className={`choice-chip danger ${draft.medicalFlags.length > 0 ? "selected" : ""}`} onClick={() => setDraft({ ...draft, medicalFlags: ["physician_restriction"] })}>بله، نیاز به بررسی دارم</button></div></div>
-              <label className="field">توضیح آسیب یا محدودیت پزشک <small>اختیاری</small><textarea className="textarea" value={draft.injuryNotes} onChange={(event) => setDraft({ ...draft, injuryNotes: event.target.value })} placeholder="مثلاً هنگام بالا بردن دست، شانه راست درد می‌گیرد…" /></label>
+              <label className="field">توضیح آسیب یا محدودیت پزشک <small>اختیاری</small><Textarea value={draft.injuryNotes} onChange={(event) => setDraft({ ...draft, injuryNotes: event.target.value })} placeholder="مثلاً هنگام بالا بردن دست، شانه راست درد می‌گیرد…" /></label>
               <div className="review-grid"><div><span>هدف</span><strong>{goals.find((goal) => goal.id === draft.goal)?.label}</strong></div><div><span>تعداد جلسات</span><strong>{draft.daysPerWeek} روز در هفته</strong></div><div><span>زمان جلسه</span><strong>{draft.sessionMinutes} دقیقه</strong></div><div><span>سبک</span><strong>{trainingStyles.find((style) => style.id === draft.trainingStyle)?.label}</strong></div></div>
               <p className="safety-copy">این دمو تشخیص پزشکی نمی‌دهد. در صورت درد شدید، آسیب تازه یا محدودیت پزشکی، برنامه باید توسط متخصص یا مربی باشگاه بررسی شود.</p>
             </div>
@@ -179,8 +183,8 @@ export function OnboardingFlow() {
 
           {error ? <p className="form-error" role="alert">{error}</p> : null}
           <footer className="assessment-actions">
-            <button type="button" className="btn ghost assessment-back" disabled={step === 0 || generating} onClick={() => { setError(""); setStep((current) => Math.max(0, current - 1)); }}><ChevronRight /> قبلی</button>
-            {step < 5 ? <button type="button" className="btn primary assessment-next" onClick={next}>ادامه <ChevronLeft /></button> : <button type="button" className="btn primary assessment-next" disabled={generating} onClick={finish}>{generating ? <><LoaderCircle className="animate-spin" /> در حال ساخت برنامه…</> : <><Sparkles /> ساخت برنامه اختصاصی</>}</button>}
+            <Button type="button" variant="ghost" className="assessment-back" disabled={step === 0 || generating} onClick={() => { setError(""); setStep((current) => Math.max(0, current - 1)); }}><ChevronRight /> قبلی</Button>
+            {step < 5 ? <Button type="button" className="assessment-next" onClick={next}>ادامه <ChevronLeft /></Button> : <Button type="button" className="assessment-next" disabled={generating} onClick={finish}>{generating ? <><LoaderCircle className="animate-spin" /> در حال ساخت برنامه…</> : <><Sparkles /> ساخت برنامه اختصاصی</>}</Button>}
           </footer>
         </section>
       </div>

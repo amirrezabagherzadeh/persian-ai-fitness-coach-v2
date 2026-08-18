@@ -6,6 +6,7 @@ import { useAppStore } from "@/store/app-store";
 import { foods } from "@/data/foods";
 import { mealMacros } from "@/domain/meal-plan";
 import { nf } from "@/lib/format";
+import { Button } from "@/components/ui/button";
 
 export function MealPlanPage() {
   const { state } = useAppStore();
@@ -27,7 +28,7 @@ export function MealPlanPage() {
                   return <div className="meal-row" key={item.foodId}><div className="split"><strong>{food?.nameFa}</strong><span>{nf(item.servings)} سروینگ</span></div><small className="muted-dark">{food?.iranianPortion} | جایگزین: {food?.alternatives.join("، ")}</small></div>;
                 })}
                 <p>{nf(macros.calories)} کالری | P {nf(macros.protein)} | C {nf(macros.carbs)} | F {nf(macros.fat)}</p>
-                <button className="btn ghost">جایگزین غذا</button>
+                <Button variant="ghost">جایگزین غذا</Button>
               </section>
             );
           })}

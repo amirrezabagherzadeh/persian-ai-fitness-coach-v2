@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { PageHeader } from "@/components/PageHeader";
 import { useAppStore } from "@/store/app-store";
+import { Button } from "@/components/ui/button";
 import { nf } from "@/lib/format";
 
 const goalLabels = { fat_loss: "کاهش چربی", muscle_gain: "عضله‌سازی", recomposition: "فرم‌دهی بدن", strength: "افزایش قدرت", general_fitness: "آمادگی عمومی", maintenance: "حفظ وضعیت" };
@@ -17,7 +18,7 @@ export function ProfilePage() {
   return (
     <AppShell>
       <div className="page">
-        <PageHeader title="اطلاعات من" eyebrow={state.user.email} description="پاسخ‌هایی که برنامه چهار هفته‌ای بر اساس آن‌ها ساخته شده است." action={<Link className="btn primary" href="/onboarding">ویرایش ارزیابی</Link>} />
+        <PageHeader title="اطلاعات من" eyebrow={state.user.email} description="پاسخ‌هایی که برنامه چهار هفته‌ای بر اساس آن‌ها ساخته شده است." action={<Button asChild><Link href="/onboarding">ویرایش ارزیابی</Link></Button>} />
         {risk ? <section className="panel"><strong>احتیاط ایمنی</strong><p className="muted">به دلیل آسیب یا مورد پزشکی ثبت‌شده، از توصیه‌های تهاجمی خودداری می‌شود.</p></section> : null}
         <section className="light-panel">
           <table className="table">
@@ -34,7 +35,7 @@ export function ProfilePage() {
             </tbody>
           </table>
           <div className="button-row mt-4">
-            <button className="btn ghost" onClick={() => { resetDemo(); router.push("/auth/signup"); }}>شروع دوباره دمو</button>
+            <Button variant="ghost" onClick={() => { resetDemo(); router.push("/auth/signup"); }}>شروع دوباره دمو</Button>
           </div>
         </section>
       </div>
