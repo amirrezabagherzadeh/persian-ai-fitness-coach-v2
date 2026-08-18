@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { MuscleMap, muscleLabel } from "@/components/MuscleMap";
 import { cn } from "@/lib/utils";
-import { beginnerExerciseGuides } from "@/data/exercise-guidance";
+import { beginnerExerciseGuides, simpleMistakeGuides } from "@/data/exercise-guidance";
 
 const focusMuscles: Record<FocusArea, string[]> = {
   chest: ["chest"], back: ["back", "lats", "mid_back", "rear_delts"], shoulders: ["shoulders", "front_delts", "side_delts", "rear_delts"],
@@ -84,6 +84,7 @@ export function ExerciseMediaPreview({ exercise }: { exercise: Exercise }) {
 export function ExerciseDetailsButton({ exercise, profile, className, children }: { exercise: Exercise; profile?: UserProfile; className?: string; children: React.ReactNode }) {
   const media = exerciseMedia[exercise.id];
   const beginnerGuide = beginnerExerciseGuides[exercise.id] ?? { opening: "با وزنه سبک شروع کن و اگر درد تیز یا غیرعادی حس کردی، حرکت را متوقف کن.", steps: exercise.instructions.slice(0, 3) as [string, string, string] };
+  const simpleMistakes = simpleMistakeGuides[exercise.id] ?? exercise.commonMistakes.map((mistake) => `این اشتباه را انجام نده: ${mistake}.`);
   return (
     <Dialog>
       <DialogTrigger asChild><button type="button" className={cn("rounded-lg text-start outline-none focus-visible:ring-3 focus-visible:ring-ring/50", className ?? "inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline")} aria-label={`نمایش آموزش ${exercise.nameFa}`}>{children}</button></DialogTrigger>
@@ -97,7 +98,7 @@ export function ExerciseDetailsButton({ exercise, profile, className, children }
         {media ? <div className="exercise-visuals"><ExerciseMediaPreview exercise={exercise} /><div className="exercise-frames-block"><div><span className="dialog-section-label">حالت‌های کلیدی حرکت</span><h3>شروع و پایان را مقایسه کن</h3></div><div className="exercise-frames" aria-label={`تصاویر شروع و پایان حرکت ${exercise.nameFa}`}>{media.frames.map((frame, index) => <figure key={frame}><Image src={frame} alt={`${index === 0 ? "حالت شروع" : "حالت پایان"} حرکت ${exercise.nameFa}`} fill sizes="(max-width: 720px) 43vw, 320px" priority /><figcaption>{index === 0 ? "شروع" : "پایان"}</figcaption></figure>)}<span className="frame-arrow"><ArrowLeft /></span></div></div></div> : null}
 
         <div className="exercise-education-grid">
-          <section className="execution-guide"><span className="dialog-section-label">راهنمای ساده برای شروع</span><h3>قدم‌به‌قدم و بدون عجله</h3><p className="beginner-note">{beginnerGuide.opening}</p><ol>{beginnerGuide.steps.map((instruction) => <li key={instruction}><span>{instruction}</span></li>)}</ol>{exercise.commonMistakes.length ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>حواست به این‌ها باشد</AlertTitle><AlertDescription>{exercise.commonMistakes.join("، ")}</AlertDescription></Alert> : null}</section>
+          <section className="execution-guide"><span className="dialog-section-label">راهنمای ساده برای شروع</span><h3>قدم‌به‌قدم و بدون عجله</h3><p className="beginner-note">{beginnerGuide.opening}</p><ol>{beginnerGuide.steps.map((instruction) => <li key={instruction}><span>{instruction}</span></li>)}</ol>{simpleMistakes.length ? <Alert variant="destructive" className="mistake-alert"><AlertTriangle className="size-4" /><AlertTitle>اشتباه‌های رایج؛ این کارها را نکن</AlertTitle><AlertDescription><p>اگر یکی از این‌ها اتفاق افتاد، وزنه را سبک‌تر کن و حرکت را آرام‌تر انجام بده.</p><ul>{simpleMistakes.map((mistake) => <li key={mistake}>{mistake}</li>)}</ul></AlertDescription></Alert> : null}</section>
           <aside className="muscle-panel"><div><span className="dialog-section-label">نقشه عضلات</span><h3>فشار حرکت کجاست؟</h3></div><MuscleMap primary={exercise.primaryMuscles} secondary={exercise.secondaryMuscles} sex={profile?.sex} /><div className="muscle-badges"><div><span>اصلی</span>{exercise.primaryMuscles.map((muscle) => <Badge key={muscle}>{muscleLabel(muscle)}</Badge>)}</div>{exercise.secondaryMuscles.length ? <div><span>کمکی</span>{exercise.secondaryMuscles.map((muscle) => <Badge variant="secondary" key={muscle}>{muscleLabel(muscle)}</Badge>)}</div> : null}</div></aside>
         </div>
 
