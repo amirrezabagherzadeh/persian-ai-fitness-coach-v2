@@ -406,20 +406,24 @@
   .exercise-dialog-header { @apply sticky top-0 z-20 grid gap-1.5 border-b bg-popover/95 px-5 py-5 pe-14 backdrop-blur; }
   .exercise-dialog-header h2 { @apply text-balance leading-tight; }
   .exercise-dialog-header p { @apply leading-5; }
-  .exercise-visuals { @apply grid gap-0.5 bg-muted lg:grid-cols-[1.1fr_.9fr]; }
+  .exercise-visuals { @apply grid gap-7 border-b bg-muted/30 p-4 sm:p-5; }
+  .video-guide, .motion-guide { @apply m-0 grid gap-3; }
+  .video-stage { @apply relative mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border bg-black shadow-2xl shadow-black/25; aspect-ratio: 16 / 9; }
+  .video-stage video { @apply h-full w-full object-contain; }
+  .video-badge, .motion-badge { @apply pointer-events-none absolute start-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-3 py-1.5 text-[11px] font-bold text-foreground backdrop-blur; }
+  .video-badge svg, .motion-badge svg { @apply size-3 fill-primary text-primary; }
+  .video-guide figcaption, .motion-guide figcaption { @apply mx-auto w-full max-w-2xl text-xs leading-5 text-muted-foreground; }
+  .exercise-frames-block { @apply grid gap-3; }
+  .exercise-frames-block h3 { @apply mt-1 text-base; }
   .exercise-frames { @apply relative grid grid-cols-2 gap-0.5; }
-  .exercise-frames figure { @apply relative m-0 aspect-square overflow-hidden bg-muted sm:aspect-[3/2]; }
+  .exercise-frames figure { @apply relative m-0 aspect-square overflow-hidden bg-muted first:rounded-s-xl last:rounded-e-xl sm:aspect-[3/2]; }
   .exercise-frames img { @apply object-cover; }
   .exercise-frames figcaption { @apply absolute bottom-3 start-3 rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground; }
   .frame-arrow { @apply absolute top-1/2 start-1/2 z-10 grid size-10 -translate-y-1/2 translate-x-1/2 place-items-center rounded-full border-2 border-popover bg-primary text-primary-foreground; }
   .frame-arrow svg { @apply size-4; }
-  .motion-guide { @apply m-0 grid content-start gap-2 bg-background p-3; }
-  .motion-stage { @apply relative aspect-[4/3] overflow-hidden rounded-xl bg-muted; }
+  .motion-stage { @apply relative mx-auto aspect-video w-full max-w-2xl overflow-hidden rounded-2xl border bg-muted; }
   .motion-frame { @apply object-cover; }
   .motion-end { animation: motion-crossfade 2.8s ease-in-out infinite alternate; }
-  .motion-badge { @apply absolute bottom-3 start-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-3 py-1.5 text-[11px] font-bold text-foreground backdrop-blur; }
-  .motion-badge svg { @apply size-3 fill-primary text-primary; }
-  .motion-guide figcaption { @apply text-xs leading-5 text-muted-foreground; }
   .exercise-education-grid { @apply grid gap-8 p-5 md:grid-cols-[1fr_.8fr] md:p-7; }
   .dialog-section-label { @apply text-xs font-bold text-primary; }
   .execution-guide { @apply grid content-start gap-3; }
@@ -431,19 +435,16 @@
   .beginner-note { @apply rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm leading-7 text-muted-foreground; }
   .muscle-panel { @apply grid content-start gap-4 rounded-xl border bg-background/50 p-4; }
   .muscle-map { @apply grid gap-3; }
-  .anatomy-art { @apply relative overflow-hidden rounded-xl border bg-muted/20 p-3; }
-  .anatomy-art img { @apply mx-auto h-auto w-full max-w-[360px] object-contain; }
-  .anatomy-overlay { @apply pointer-events-none absolute inset-3 h-[calc(100%-1.5rem)] w-[calc(100%-1.5rem)]; }
-  .anatomy-region { stroke: color-mix(in oklab, var(--background) 70%, transparent); stroke-width: 1.4; transition: opacity 180ms ease; }
-  .anatomy-region.inactive { opacity: 0; }
-  .anatomy-region.primary { fill: oklch(0.72 0.22 25 / 82%); filter: drop-shadow(0 0 4px oklch(0.72 0.22 25 / 55%)); }
-  .anatomy-region.secondary { fill: oklch(0.79 0.16 75 / 65%); }
+  .anatomy-art { @apply pointer-events-none relative overflow-hidden rounded-xl bg-muted/15 px-1 py-4; }
+  .anatomy-art > div { @apply gap-0!; }
+  .anatomy-art > div > div { @apply gap-0!; }
+  .anatomy-art svg { @apply h-auto max-w-[48%]; }
+  .anatomy-art path { stroke: none !important; outline: none !important; }
   .muscle-legend { @apply grid gap-2 text-xs text-muted-foreground; }
   .muscle-legend span { @apply inline-flex items-center gap-1.5 leading-5; }
   .muscle-legend i { @apply size-2.5 rounded-full; }
   .muscle-legend i.primary { @apply bg-primary; }
   .muscle-legend i.secondary { background: color-mix(in oklab, var(--primary) 45%, var(--muted)); }
-  .anatomy-credit { @apply text-[10px] leading-4 text-muted-foreground underline-offset-2 hover:text-primary hover:underline; }
   .muscle-badges { @apply grid gap-3; }
   .muscle-badges > div { @apply flex flex-wrap items-center gap-1.5; }
   .muscle-badges > div > span { @apply ms-auto text-[10px] text-muted-foreground; }

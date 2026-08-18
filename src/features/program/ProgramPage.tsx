@@ -36,7 +36,7 @@ export function ProgramPage() {
 
         {state.program.safetyNotice ? <div className="program-warning" role="alert"><Info /><span>{state.program.safetyNotice}</span></div> : null}
 
-        <section className="program-guide"><span className="guide-icon"><Play /></span><div><strong>قبل از شروع، اجرای حرکت را ببین</strong><p>نام هر حرکت قابل کلیک است؛ تصویر شروع و پایان، عضلات درگیر و خطاهای رایج را همان‌جا می‌بینی.</p></div><ChevronLeft /></section>
+        <section className="program-guide"><span className="guide-icon"><Play /></span><div><strong>قبل از شروع، اجرای حرکت را ببین</strong><p>نام هر حرکت قابل کلیک است؛ ابتدا ویدیوی اجرا و سپس تصاویر شروع و پایان، عضلات درگیر و خطاهای رایج را می‌بینی.</p></div><ChevronLeft /></section>
 
         <section className="week-section">
           <div className="section-heading"><div><span>تقویم برنامه</span><h2>هفته {activeWeek} از ۴</h2></div><p>حرکت‌ها در تمام چهار هفته یکسان هستند.</p></div>

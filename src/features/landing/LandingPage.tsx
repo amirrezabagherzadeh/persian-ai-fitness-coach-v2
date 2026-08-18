@@ -5,7 +5,7 @@ import { ArrowLeft, CalendarDays, Check, Dumbbell, Play, ShieldCheck, Sparkles, 
 const steps = [
   { number: "۰۱", title: "شرایطت را می‌گویی", text: "هدف، سابقه، روزهای تمرین و محدودیت‌های بدنی." },
   { number: "۰۲", title: "برنامه‌ات ساخته می‌شود", text: "یک دوره چهار هفته‌ای متناسب با زمان حضور تو در باشگاه." },
-  { number: "۰۳", title: "حرکت را درست اجرا می‌کنی", text: "تصویر شروع و پایان، عضلات هدف و نکات اجرای صحیح." },
+  { number: "۰۳", title: "حرکت را درست اجرا می‌کنی", text: "ویدیوی بی‌صدا، تصویر شروع و پایان و نمایش دقیق عضلات هدف." },
 ];
 
 export function LandingPage() {
