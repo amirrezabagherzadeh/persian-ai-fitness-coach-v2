@@ -7,7 +7,6 @@ import { AppShell } from "@/components/AppShell";
 import { ExerciseDetailsButton, ExerciseMediaPreview } from "@/components/ExerciseDetailsButton";
 import { RestTimer } from "@/components/RestTimer";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { exercises } from "@/data/exercises";
 import type { TrainingDay, UserProfile, WorkoutSession, WorkoutSet } from "@/domain/types";
@@ -47,17 +46,13 @@ function GuidedWorkout({ day, profile, onSave }: { day: TrainingDay; profile: Us
   const isLastExercise = exerciseIndex === day.prescriptions.length - 1;
   const isTimedExercise = exercise?.id === "plank";
 
-  const updateActiveSet = (patch: Partial<WorkoutSet>) => {
-    setSets((current) => current.map((set) =>
-      set.prescriptionId === activeSet.prescriptionId && set.setNumber === activeSet.setNumber
-        ? { ...set, ...patch }
-        : set,
-    ));
-  };
-
   const completeSet = () => {
     const isFinalSet = activeSet.setNumber === prescription.sets;
-    updateActiveSet({ completed: true });
+    setSets((current) => current.map((set) =>
+      set.prescriptionId === activeSet.prescriptionId && set.setNumber === activeSet.setNumber
+        ? { ...set, completed: true }
+        : set,
+    ));
     setPhase(isFinalSet ? "transition" : "rest");
   };
 
@@ -148,11 +143,6 @@ function GuidedWorkout({ day, profile, onSave }: { day: TrainingDay; profile: Us
                 <span><ListChecks /><b>{prescription.sets}</b><small>ست کل</small></span>
                 <span><RotateCcw /><b dir="ltr">{prescription.reps[0]}–{prescription.reps[1]}</b><small>{isTimedExercise ? "ثانیه" : "تکرار"}</small></span>
                 <span><Clock3 /><b>{prescription.restSeconds}</b><small>ثانیه استراحت</small></span>
-              </div>
-
-              <div className="set-inputs">
-                <label><span>{isTimedExercise ? "مدت انجام‌شده" : "تکرار انجام‌شده"}</span><Input inputMode="numeric" type="number" min="1" value={activeSet.reps} onChange={(event) => updateActiveSet({ reps: Number(event.target.value) })} /><small>{isTimedExercise ? "ثانیه" : "تکرار"}</small></label>
-                <label><span>وزنه استفاده‌شده</span><Input inputMode="decimal" type="number" min="0" step="0.5" value={activeSet.weightKg} onChange={(event) => updateActiveSet({ weightKg: Number(event.target.value) })} /><small>کیلوگرم · اختیاری</small></label>
               </div>
 
               <Button className="complete-set-button" size="lg" onClick={completeSet}><CheckCircle2 /> ست {activeSet.setNumber} را انجام دادم</Button>
