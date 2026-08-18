@@ -1,14 +1,5 @@
 export type ExerciseMedia = {
   frames: [string, string];
-  sourceName: string;
-  sourceUrl: string;
-  license: string;
-};
-
-const source = {
-  sourceName: "Free Exercise DB",
-  sourceUrl: "https://github.com/yuhonas/free-exercise-db",
-  license: "Public Domain (Unlicense)",
 };
 
 export const exerciseMedia: Record<string, ExerciseMedia> = Object.fromEntries(
@@ -29,7 +20,6 @@ export const exerciseMedia: Record<string, ExerciseMedia> = Object.fromEntries(
     id,
     {
       frames: [`/exercises/${id}-0.jpg`, `/exercises/${id}-1.jpg`],
-      ...source,
     },
   ]),
 );

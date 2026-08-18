@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { AlertTriangle, ArrowLeft, BadgeCheck, ExternalLink, Play, Target } from "lucide-react";
+import { AlertTriangle, ArrowLeft, BadgeCheck, Play, Target } from "lucide-react";
 import type { Exercise, FocusArea, UserProfile } from "@/domain/types";
 import { exerciseMedia } from "@/data/exercise-media";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { MuscleMap, muscleLabel } from "@/components/MuscleMap";
 import { cn } from "@/lib/utils";
+import { beginnerExerciseGuides } from "@/data/exercise-guidance";
 
 const focusMuscles: Record<FocusArea, string[]> = {
   chest: ["chest"], back: ["back", "lats", "mid_back", "rear_delts"], shoulders: ["shoulders", "front_delts", "side_delts", "rear_delts"],
@@ -30,8 +31,22 @@ function reasonForExercise(exercise: Exercise, profile?: UserProfile) {
   return `${goalReason[profile.goal]}${matchesFocus ? " همچنین با ناحیه‌ای که برای تمرکز بیشتر انتخاب کردی هماهنگ است." : ""}`;
 }
 
+function MotionGuide({ frames, exerciseName }: { frames: [string, string]; exerciseName: string }) {
+  return (
+    <figure className="motion-guide" aria-label={`نمایش متحرک حالت شروع و پایان ${exerciseName}`}>
+      <div className="motion-stage">
+        <Image className="motion-frame motion-start" src={frames[0]} alt="" fill sizes="(max-width: 720px) 86vw, 360px" />
+        <Image className="motion-frame motion-end" src={frames[1]} alt="" fill sizes="(max-width: 720px) 86vw, 360px" />
+        <span className="motion-badge"><Play /> نمایش متحرک</span>
+      </div>
+      <figcaption>از حالت شروع، آرام به حالت پایان برو و دوباره با کنترل برگرد.</figcaption>
+    </figure>
+  );
+}
+
 export function ExerciseDetailsButton({ exercise, profile, className, children }: { exercise: Exercise; profile?: UserProfile; className?: string; children: React.ReactNode }) {
   const media = exerciseMedia[exercise.id];
+  const beginnerGuide = beginnerExerciseGuides[exercise.id] ?? { opening: "با وزنه سبک شروع کن و اگر درد تیز یا غیرعادی حس کردی، حرکت را متوقف کن.", steps: exercise.instructions.slice(0, 3) as [string, string, string] };
   return (
     <Dialog>
       <DialogTrigger asChild><button type="button" className={cn("inline-flex items-center gap-2 rounded-lg text-start outline-none focus-visible:ring-3 focus-visible:ring-ring/50", className ?? "text-sm font-medium text-primary hover:underline")} aria-label={`نمایش آموزش ${exercise.nameFa}`}>{children}</button></DialogTrigger>
@@ -42,15 +57,14 @@ export function ExerciseDetailsButton({ exercise, profile, className, children }
           <DialogDescription className="text-start text-sm" dir="ltr" lang="en">{exercise.nameEn}</DialogDescription>
         </DialogHeader>
 
-        {media ? <div className="exercise-frames" aria-label={`تصاویر شروع و پایان حرکت ${exercise.nameFa}`}>{media.frames.map((frame, index) => <figure key={frame}><Image src={frame} alt={`${index === 0 ? "حالت شروع" : "حالت پایان"} حرکت ${exercise.nameFa}`} fill sizes="(max-width: 720px) 50vw, 440px" priority /><figcaption>{index === 0 ? "شروع" : "پایان"}</figcaption></figure>)}<span className="frame-arrow"><ArrowLeft /></span></div> : null}
+        {media ? <div className="exercise-visuals"><div className="exercise-frames" aria-label={`تصاویر شروع و پایان حرکت ${exercise.nameFa}`}>{media.frames.map((frame, index) => <figure key={frame}><Image src={frame} alt={`${index === 0 ? "حالت شروع" : "حالت پایان"} حرکت ${exercise.nameFa}`} fill sizes="(max-width: 720px) 43vw, 320px" priority /><figcaption>{index === 0 ? "شروع" : "پایان"}</figcaption></figure>)}<span className="frame-arrow"><ArrowLeft /></span></div><MotionGuide frames={media.frames} exerciseName={exercise.nameFa} /></div> : null}
 
         <div className="exercise-education-grid">
-          <section className="execution-guide"><span className="dialog-section-label">اجرای صحیح</span><h3>حرکت را مرحله‌به‌مرحله انجام بده</h3><ol>{exercise.instructions.map((instruction) => <li key={instruction}><span>{instruction}</span></li>)}</ol>{exercise.commonMistakes.length ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>خطاهای رایج</AlertTitle><AlertDescription>{exercise.commonMistakes.join("، ")}</AlertDescription></Alert> : null}</section>
+          <section className="execution-guide"><span className="dialog-section-label">راهنمای ساده برای شروع</span><h3>قدم‌به‌قدم و بدون عجله</h3><p className="beginner-note">{beginnerGuide.opening}</p><ol>{beginnerGuide.steps.map((instruction) => <li key={instruction}><span>{instruction}</span></li>)}</ol>{exercise.commonMistakes.length ? <Alert variant="destructive"><AlertTriangle className="size-4" /><AlertTitle>حواست به این‌ها باشد</AlertTitle><AlertDescription>{exercise.commonMistakes.join("، ")}</AlertDescription></Alert> : null}</section>
           <aside className="muscle-panel"><div><span className="dialog-section-label">نقشه عضلات</span><h3>فشار حرکت کجاست؟</h3></div><MuscleMap primary={exercise.primaryMuscles} secondary={exercise.secondaryMuscles} /><div className="muscle-badges"><div><span>اصلی</span>{exercise.primaryMuscles.map((muscle) => <Badge key={muscle}>{muscleLabel(muscle)}</Badge>)}</div>{exercise.secondaryMuscles.length ? <div><span>کمکی</span>{exercise.secondaryMuscles.map((muscle) => <Badge variant="secondary" key={muscle}>{muscleLabel(muscle)}</Badge>)}</div> : null}</div></aside>
         </div>
 
         <section className="exercise-rationale"><span className="rationale-icon"><Target /></span><div><span className="dialog-section-label">دلیل حضور در برنامه تو</span><h3>چرا این حرکت را انجام می‌دهی؟</h3><p>{reasonForExercise(exercise, profile)}</p></div><BadgeCheck /></section>
-        {media ? <footer className="exercise-source">تصاویر آموزشی از <a href={media.sourceUrl} target="_blank" rel="noreferrer">{media.sourceName} <ExternalLink /></a><span>· {media.license}</span></footer> : null}
       </DialogContent>
     </Dialog>
   );
