@@ -505,7 +505,7 @@
   .exercise-visuals { @apply grid gap-7 border-b bg-muted/30 p-4 sm:p-5; }
   .video-guide, .motion-guide { @apply m-0 grid gap-3; }
   .video-stage { @apply relative mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border bg-black shadow-2xl shadow-black/25; aspect-ratio: 16 / 9; }
-  .video-stage video { @apply h-full w-full object-contain; }
+  .video-stage video { @apply h-full w-full object-contain; pointer-events: none; }
   .animation-stage { @apply grid place-items-center bg-[#f5f5f3]; }
   .animation-stage img { @apply h-full w-full object-contain; }
   .video-badge, .motion-badge { @apply pointer-events-none absolute start-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-background/85 px-3 py-1.5 text-[11px] font-bold text-foreground backdrop-blur; }
@@ -584,6 +584,14 @@
   .set-inputs label > small { @apply static text-center; }
   .movement-complete-stage .guided-primary-button { @apply w-full; }
   .guided-sidebar-card { @apply order-2; }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .video-stage.portrait-video { max-width: min(100%, 430px); aspect-ratio: 9 / 16; }
+}
+
+@media (max-width: 639px) {
+  .video-stage.portrait-video { max-width: 430px; aspect-ratio: 9 / 16; }
 }
 
 @media (prefers-reduced-motion: reduce) {

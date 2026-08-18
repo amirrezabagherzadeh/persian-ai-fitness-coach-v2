@@ -1,6 +1,7 @@
 export type ExerciseMedia = {
   frames: [string, string];
   video?: string;
+  videoOrientation?: "portrait" | "landscape";
   animation?: string;
 };
 
@@ -39,7 +40,7 @@ export const exerciseMedia: Record<string, ExerciseMedia> = Object.fromEntries(
     id,
     {
       frames: [`/exercises/${id}-0.jpg`, `/exercises/${id}-1.jpg`],
-      ...(exerciseVideos[id] ? { video: exerciseVideos[id] } : {}),
+      ...(exerciseVideos[id] ? { video: exerciseVideos[id], videoOrientation: "portrait" as const } : {}),
       ...(exerciseAnimations[id] ? { animation: exerciseAnimations[id] } : {}),
     },
   ]),

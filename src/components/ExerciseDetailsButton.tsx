@@ -44,11 +44,11 @@ function MotionGuide({ frames, exerciseName }: { frames: [string, string]; exerc
   );
 }
 
-function VideoGuide({ src, poster, exerciseName }: { src: string; poster: string; exerciseName: string }) {
+function VideoGuide({ src, poster, exerciseName, orientation }: { src: string; poster: string; exerciseName: string; orientation?: "portrait" | "landscape" }) {
   return (
     <figure className="video-guide">
-      <div className="video-stage">
-        <video autoPlay controls loop muted playsInline preload="metadata" poster={poster} aria-label={`ویدیوی آموزش اجرای ${exerciseName}`}>
+      <div className={`video-stage ${orientation === "portrait" ? "portrait-video" : ""}`}>
+        <video autoPlay loop muted playsInline preload="metadata" poster={poster} aria-label={`ویدیوی آموزشی بی‌صدای اجرای ${exerciseName}`} controlsList="nodownload noplaybackrate noremoteplayback" disablePictureInPicture disableRemotePlayback tabIndex={-1} onContextMenu={(event) => event.preventDefault()}>
           <source src={src} type="video/mp4" />
           مرورگر شما امکان پخش این ویدیو را ندارد.
         </video>
@@ -76,7 +76,7 @@ export function ExerciseMediaPreview({ exercise }: { exercise: Exercise }) {
   const media = exerciseMedia[exercise.id];
   if (!media) return null;
 
-  if (media.video) return <VideoGuide src={media.video} poster={media.frames[0]} exerciseName={exercise.nameFa} />;
+  if (media.video) return <VideoGuide src={media.video} poster={media.frames[0]} exerciseName={exercise.nameFa} orientation={media.videoOrientation} />;
   if (media.animation) return <AnimationGuide src={media.animation} exerciseName={exercise.nameFa} />;
   return <MotionGuide frames={media.frames} exerciseName={exercise.nameFa} />;
 }
