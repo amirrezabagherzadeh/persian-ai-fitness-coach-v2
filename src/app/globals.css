@@ -382,10 +382,10 @@
   .exercise-thumb { @apply relative grid size-14 overflow-hidden rounded-lg bg-muted sm:size-16; }
   .exercise-thumb img { @apply object-cover; }
   .exercise-thumb > svg { @apply m-auto size-5; }
-  .exercise-identity { @apply grid min-w-0 gap-0.5; }
+  .exercise-identity { @apply grid min-w-0 items-center gap-0.5 text-center; }
   .exercise-identity strong { @apply text-sm; }
-  .exercise-identity small { @apply truncate text-start text-[11px] text-muted-foreground; }
-  .exercise-muscle { @apply hidden text-xs text-muted-foreground sm:block; }
+  .exercise-identity small { @apply truncate text-center text-[11px] text-muted-foreground; }
+  .exercise-muscle { @apply hidden justify-self-center text-center text-xs text-muted-foreground sm:block; }
   .exercise-dose { @apply col-span-full grid w-full grid-cols-3 overflow-hidden rounded-xl border bg-background/60 text-center shadow-xs sm:col-auto; }
   .dose-item { @apply grid min-w-0 min-h-16 content-center justify-items-center gap-1.5 border-s border-border px-2 first:border-s-0; }
   .dose-item b { @apply block text-xl leading-none font-black tabular-nums text-foreground; unicode-bidi: isolate; }
