@@ -5,6 +5,10 @@ export function nf(value: number): string {
   return faNumber.format(value);
 }
 
+export function faDigits(value: string | number): string {
+  return String(value).replace(/\d/g, (digit) => "۰۱۲۳۴۵۶۷۸۹"[Number(digit)]);
+}
+
 export function percent(value: number): string {
   return `${faNumber.format(Math.round(value))}٪`;
 }

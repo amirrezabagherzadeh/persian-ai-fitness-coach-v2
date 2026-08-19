@@ -1,137 +1,110 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, Dumbbell, Flame, Play, Plus, Salad, Search, Trophy, Waves } from "lucide-react";
+import { useState } from "react";
+import { ArrowLeft, CalendarClock, CalendarDays, Check, CheckCircle2, Circle, Clock3, Dumbbell, RotateCcw, Sparkles, TimerReset } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { ExerciseDetailsButton } from "@/components/ExerciseDetailsButton";
-import { PageHeader } from "@/components/PageHeader";
-import { MetricCard } from "@/components/MetricCard";
-import { MacroProgress } from "@/components/MacroProgress";
-import { useAppStore } from "@/store/app-store";
-import { totalsForFoodLogs } from "@/domain/meal-plan";
-import { nextReminder } from "@/domain/reminders";
-import { nf, todayFa } from "@/lib/format";
 import { exercises } from "@/data/exercises";
-import { Progress } from "@/components/ui/progress";
+import { useAppStore } from "@/store/app-store";
+import { faDigits, nf, todayFa } from "@/lib/format";
+
+const weekDays = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه"];
+const exerciseMap = new Map(exercises.map((exercise) => [exercise.id, exercise]));
 
 export function DashboardPage() {
-  const { state } = useAppStore();
-  const todayWorkout = state.program.days[0];
-  const totals = totalsForFoodLogs(state.foodLogs);
-  const reminder = nextReminder(state.reminders);
-  const completedThisWeek = state.workouts.filter((workout) => workout.completedAt).length;
+  const { state, rescheduleWorkout } = useAppStore();
+  const [rescheduling, setRescheduling] = useState(false);
+  const [rescheduleMessage, setRescheduleMessage] = useState("");
+  const completedDayIds = new Set(state.workouts.filter((workout) => workout.completedAt).map((workout) => workout.dayId));
+  const nextWorkout = state.program.days.find((day) => !completedDayIds.has(day.id));
+  const todayWorkout = nextWorkout ?? state.program.days.at(-1);
+  const weekComplete = !nextWorkout;
+  const occupiedWeekdays = new Set(state.program.days.filter((day) => day.id !== todayWorkout?.id).map((day) => day.weekday));
+  const availableTransferDays = weekDays.filter((day) => !occupiedWeekdays.has(day));
+  const activeDraft = state.activeWorkout;
+  const draftDay = activeDraft ? state.program.days.find((day) => day.id === activeDraft.dayId) : undefined;
+  const draftPrescription = draftDay && activeDraft ? draftDay.prescriptions[activeDraft.exerciseIndex] : undefined;
+  const draftExercise = draftPrescription && activeDraft ? exerciseMap.get(activeDraft.exerciseOverrides[draftPrescription.id] ?? draftPrescription.exerciseId) : undefined;
+  const draftSets = draftPrescription && activeDraft ? activeDraft.sets.filter((set) => set.prescriptionId === draftPrescription.id) : [];
+  const resumeSet = draftSets.find((set) => !set.completed)?.setNumber ?? draftSets.at(-1)?.setNumber;
+
+  if (!todayWorkout) return null;
+
   return (
     <AppShell>
-      <div className="page">
-        <div className="app-topbar">
-          <div className="avatar">{state.user.name.slice(0, 1)}</div>
-          <div className="flex-1">
-            <div className="muted">{todayFa()}</div>
-            <h1 className="text-3xl font-bold tracking-tight">سلام {state.user.name}</h1>
+      <div className="today-page page">
+        <header className="today-header">
+          <div><span>{todayFa()}</span><h1>سلام {state.user.name}</h1></div>
+          <span className="today-progress"><b>{nf(completedDayIds.size)}</b> از {nf(state.program.days.length)} جلسه این هفته</span>
+        </header>
+
+        {activeDraft && draftDay && draftPrescription && draftExercise ? (
+          <section className="resume-workout-card" aria-label="تمرین نیمه‌تمام">
+            <span className="resume-workout-icon"><RotateCcw /></span>
+            <div className="resume-workout-copy">
+              <span>ادامه تمرین قبلی؟</span>
+              <h2>{draftExercise.nameFa}</h2>
+              <p>{activeDraft.phase === "complete" ? "تمرین تمام شده؛ جمع‌بندی و ثبت شدت باقی مانده است." : `ست ${nf(resumeSet ?? 1)} از ${nf(draftSets.length || draftPrescription.sets)} · ${draftDay.title}`}</p>
+            </div>
+            <Link className="btn resume-workout-button" href={`/workout/${activeDraft.dayId}${activeDraft.compact ? "?duration=30" : ""}`}>ادامه تمرین <ArrowLeft /></Link>
+          </section>
+        ) : null}
+
+        <section className={`today-workout-card ${weekComplete ? "complete" : ""}`}>
+          <div className="today-card-copy">
+            <span className="today-label">{weekComplete ? <CheckCircle2 /> : <Sparkles />}{weekComplete ? "این هفته کامل شد" : "امروز"}</span>
+            <span className="today-weekday">{faDigits(todayWorkout.weekday)}</span>
+            <h2>{weekComplete ? "همه جلسه‌ها را انجام دادی" : todayWorkout.title}</h2>
+            <div className="today-workout-facts">
+              <span><Dumbbell /><b>{nf(todayWorkout.prescriptions.length)}</b> حرکت</span>
+              <span><Clock3 />حدود <b>{nf(todayWorkout.estimatedMinutes)}</b> دقیقه</span>
+            </div>
+            {weekComplete ? (
+              <p>آفرین؛ برنامه این هفته کامل است. برنامه کامل را ببین یا برای هفته بعد آماده شو.</p>
+            ) : (
+              <p>همه‌چیز آماده است؛ داخل تمرین، هر حرکت و ست قدم‌به‌قدم نمایش داده می‌شود.</p>
+            )}
           </div>
-          <Link className="btn secondary" href="/reminders" aria-label="یادآورها"><Bell size={19} /></Link>
-        </div>
-        <div className="pill-search"><Search size={18} /> جستجوی تمرین، غذا یا سوال از مربی...</div>
-        <div className="mt-4 grid grid-2">
-          <section className="lime-progress-card">
-            <div className="split">
-              <div>
-                <span className="tag">Today Progress</span>
-                <h2 className="mt-2.5">کالری و فعالیت امروز</h2>
+          <div className="today-card-action">
+            {weekComplete ? <span className="week-complete-mark"><Check /></span> : <Link className="btn today-start-button" href={`/workout/${todayWorkout.id}`}><Dumbbell /> شروع تمرین <ArrowLeft /></Link>}
+          </div>
+        </section>
+
+        {!weekComplete ? (
+          <section className="workout-rescue-card">
+            <div><span>برنامه امروز با زندگی‌ات جور نیست؟</span><h2>تمرین را با امروز هماهنگ کن</h2></div>
+            <div className="workout-rescue-actions">
+              <Link href={`/workout/${todayWorkout.id}?duration=30`}><TimerReset /><span><strong>فقط ۳۰ دقیقه وقت دارم</strong><small>نسخه کوتاه با حرکات اصلی</small></span><ArrowLeft /></Link>
+              <button type="button" onClick={() => { setRescheduling((current) => !current); setRescheduleMessage(""); }}><CalendarClock /><span><strong>امروز نمی‌رسم یا باشگاه بسته است</strong><small>انتقال همین جلسه به یک روز دیگر</small></span><ArrowLeft /></button>
+            </div>
+            {rescheduling ? (
+              <div className="reschedule-panel" aria-live="polite">
+                <p>این جلسه را به کدام روز منتقل کنیم؟</p>
+                <div>{availableTransferDays.map((day) => <button type="button" onClick={() => { rescheduleWorkout(todayWorkout.id, day); setRescheduleMessage(`جلسه به ${day} منتقل شد.`); setRescheduling(false); }} key={day}>{day}</button>)}</div>
               </div>
-              <Trophy color="var(--accent)" />
-            </div>
-            <div className="calorie-ring">
-              <div className="text-center">
-                <strong>{nf(totals.calories)}</strong>
-                <div>kcal</div>
-              </div>
-            </div>
-            <div className="grid grid-3">
-              <div className="mini-stat"><span className="muted-dark">پروتئین</span><strong>{nf(totals.protein)}g</strong></div>
-              <div className="mini-stat"><span className="muted-dark">آب</span><strong>۲.۵L</strong></div>
-              <div className="mini-stat"><span className="muted-dark">تمرین</span><strong>{nf(completedThisWeek)}/{nf(state.user.daysPerWeek)}</strong></div>
-            </div>
+            ) : null}
+            {rescheduleMessage ? <p className="reschedule-success"><Check /> {rescheduleMessage}</p> : null}
           </section>
-          <section className="panel">
-            <h2>دسته‌ها</h2>
-            <div className="category-strip">
-              <Link className="category-chip active" href="/program"><Dumbbell size={16} />برنامه</Link>
-              <Link className="category-chip" href="/nutrition"><Salad size={16} />تغذیه</Link>
-              <Link className="category-chip" href="/progress"><Flame size={16} />پیشرفت</Link>
-              <Link className="category-chip" href="/reminders"><Waves size={16} />آب</Link>
-            </div>
-            <div className="workout-media-card panel mt-3.5">
-              <span className="tag">{todayWorkout.weekday}</span>
-              <h2>{todayWorkout.title}</h2>
-              <p className="muted">تمرین امروز با {todayWorkout.prescriptions.length} حرکت و RIR هدف آماده است.</p>
-              <Link className="btn primary" href={`/workout/${todayWorkout.id}`}><Dumbbell size={18} />شروع تمرین امروز</Link>
-            </div>
-          </section>
-        </div>
-        <div className="mt-4 grid grid-3">
-          <MetricCard label="کالری امروز" value={`${nf(totals.calories)} / ${nf(state.mealPlan.target.calories)}`} helper="ثبت‌شده در وعده‌های امروز" />
-          <MetricCard label="پروتئین" value={`${nf(totals.protein)} / ${nf(state.mealPlan.target.proteinG)} g`} helper={`${nf(Math.max(0, state.mealPlan.target.proteinG - totals.protein))} گرم باقی مانده`} />
-          <MetricCard label="استریک تمرین" value={`${nf(completedThisWeek)} جلسه`} helper="بر اساس تاریخچه محلی دمو" />
-        </div>
-        <div className="mt-4 grid grid-2">
-          <section className="light-panel">
-            <div className="split">
-              <div>
-                <span className="tag">تمرین امروز</span>
-                <h2>{todayWorkout.title}</h2>
-              </div>
-              <Dumbbell />
-            </div>
-            <p className="muted-dark">{todayWorkout.warmup}</p>
-            {todayWorkout.prescriptions.slice(0, 4).map((item) => {
-              const exercise = exercises.find((candidate) => candidate.id === item.exerciseId);
-              return exercise ? (
-              <ExerciseDetailsButton exercise={exercise} className="exercise-row exercise-row-button" key={item.id}>
-                <div className="split">
-                  <span className="exercise-row-name"><Play size={15} aria-hidden="true" /><strong>{item.order}. {exercise.nameFa}</strong></span>
-                  <span>{item.sets} × {item.reps[0]}-{item.reps[1]}</span>
+        ) : null}
+
+        <section className="week-overview-card">
+          <header><div><span>این هفته</span><h2>مسیر تمرین‌ها</h2></div><CalendarDays /></header>
+          <div className="week-session-list">
+            {state.program.days.map((day) => {
+              const completed = completedDayIds.has(day.id);
+              const current = day.id === nextWorkout?.id;
+              return (
+                <div className={completed ? "completed" : current ? "current" : ""} key={day.id}>
+                  <span className="week-session-status">{completed ? <Check /> : <Circle />}</span>
+                  <div><strong>{faDigits(day.weekday)}</strong><small>{day.title}</small></div>
+                  <span>{completed ? "انجام شد" : current ? "جلسه بعد" : "در انتظار"}</span>
                 </div>
-              </ExerciseDetailsButton>
-              ) : null;
+              );
             })}
-            <div className="button-row mt-3">
-              <Link className="btn dark" href={`/workout/${todayWorkout.id}`}>شروع تمرین</Link>
-              <Link className="btn ghost" href={`/program/day/${todayWorkout.id}`}>جزئیات</Link>
-            </div>
-          </section>
-          <section className="light-panel">
-            <div className="split">
-              <div>
-                <span className="tag">تغذیه امروز</span>
-                <h2>هدف ماکرو</h2>
-              </div>
-              <Salad />
-            </div>
-            <MacroProgress label="پروتئین" current={totals.protein} target={state.mealPlan.target.proteinG} />
-            <MacroProgress label="کربوهیدرات" current={totals.carbs} target={state.mealPlan.target.carbsG} />
-            <MacroProgress label="چربی" current={totals.fat} target={state.mealPlan.target.fatG} />
-            <Link className="btn dark mt-3" href="/nutrition"><Plus size={17} />ثبت وعده غذایی</Link>
-          </section>
-        </div>
-        <div className="mt-4 grid grid-2">
-          <section className="panel">
-            <div className="split">
-              <h2>پیشرفت هفته</h2>
-              <Link className="btn secondary" href="/check-in">چک‌این</Link>
-            </div>
-            <p className="muted">تمرین‌های کامل‌شده: {nf(completedThisWeek)} از {nf(state.user.daysPerWeek)}</p>
-            <Progress value={Math.min(100, completedThisWeek / state.user.daysPerWeek * 100)} className="h-2" />
-          </section>
-          <section className="panel">
-            <div className="split">
-              <h2>یادآور بعدی</h2>
-              <Bell color="var(--accent)" />
-            </div>
-            <p className="muted">{reminder ? `${reminder.title}، ${reminder.day} ساعت ${reminder.time}` : "یادآور فعالی نداری."}</p>
-            <Link className="btn secondary" href="/reminders">مدیریت یادآورها</Link>
-          </section>
-        </div>
+          </div>
+        </section>
+
+        <Link className="full-program-link" href="/program"><span><strong>مشاهده برنامه کامل</strong><small>همه هفته‌ها، حرکات و جزئیات ست‌ها</small></span><ArrowLeft /></Link>
       </div>
     </AppShell>
   );

@@ -1,8 +1,9 @@
 export type ExerciseMedia = {
-  frames: [string, string];
+  frames?: [string, string];
   video?: string;
   videoOrientation?: "portrait" | "landscape";
   animation?: string;
+  animationOrientation?: "portrait" | "landscape";
 };
 
 const exerciseVideos: Partial<Record<string, string>> = {
@@ -20,6 +21,19 @@ const exerciseAnimations: Partial<Record<string, string>> = {
   "romanian-deadlift": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/glutes/barbell-romanian-deadlift.gif",
   "shoulder-press": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/delts/dumbbell-seated-shoulder-press.gif",
   "biceps-curl": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/biceps/dumbbell-biceps-curl.gif",
+  "push-up": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/push-up.gif",
+  "pull-up": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/pull-up.gif",
+  "assisted-pull-up": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/lats/assisted-pull-up.gif",
+  "inverted-row": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/upper-back/inverted-row.gif",
+  "bodyweight-squat": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/squat-to-overhead-reach.gif",
+  "split-squat": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/quads/split-squats.gif",
+  "walking-lunge": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/glutes/walking-lunge.gif",
+  "glute-bridge": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/glutes/low-glute-bridge-on-floor.gif",
+  "pike-push-up": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/glutes/pike-to-cobra-push-up.gif",
+  "chest-dip": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/pectorals/chest-dip.gif",
+  "diamond-push-up": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/diamond-push-up.gif",
+  "bench-dip": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/triceps/bench-dip-knees-bent.gif",
+  "dead-bug": "https://cdn.jsdelivr.net/gh/JahelCuadrado/ExerciseGymGifsDB@v1.1.0/abs/dead-bug.gif",
 };
 
 export const exerciseMedia: Record<string, ExerciseMedia> = Object.fromEntries(
@@ -45,3 +59,7 @@ export const exerciseMedia: Record<string, ExerciseMedia> = Object.fromEntries(
     },
   ]),
 );
+
+for (const id of ["push-up", "pull-up", "assisted-pull-up", "inverted-row", "bodyweight-squat", "split-squat", "walking-lunge", "glute-bridge", "pike-push-up", "chest-dip", "diamond-push-up", "bench-dip", "dead-bug"]) {
+  exerciseMedia[id] ??= { animation: exerciseAnimations[id], animationOrientation: "portrait" };
+}

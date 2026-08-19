@@ -63,10 +63,15 @@ export function normalizeCoachMethodology(rawMethod: string): CoachMethodologyRu
 
 export function reviewCoachMethodology(methodology: CoachMethodology): CoachMethodology {
   const rules = normalizeCoachMethodology(methodology.rawMethod);
+  const intensityLabel = rules.intensityStyle === "near_failure"
+    ? "بسیار سخت"
+    : rules.intensityStyle === "conservative_rir"
+      ? "محافظه‌کارانه"
+      : "متوسط رو به سخت";
   const findings = [
     `ساختار تشخیص‌داده‌شده: ${rules.preferredSplit === "auto" ? "انتخاب خودکار بر اساس کاربر" : rules.preferredSplit}.`,
     `سطح حجم: ${rules.volumeBias}، هدف حدودی ${rules.weeklySetTarget} ست هفتگی برای عضله اصلی.`,
-    `سبک شدت: ${rules.intensityStyle}.`,
+    `سبک شدت: ${intensityLabel}.`,
   ];
 
   if (rules.intensityStyle === "near_failure") {

@@ -28,7 +28,7 @@ export function LandingPage() {
           <div className="showcase-week">{["ش", "ی", "د", "س", "چ", "پ", "ج"].map((day, index) => <span className={index === 0 || index === 2 || index === 4 ? "active" : ""} key={day + index}>{day}</span>)}</div>
           <div className="showcase-workout">
             <div className="showcase-image"><Image src="/exercises/dumbbell-press-0.jpg" alt="پرس سینه دمبل" fill sizes="(max-width: 768px) 85vw, 420px" priority /></div>
-            <div className="showcase-label"><span><CalendarDays /> شنبه · بالاتنه A</span><strong>پرس سینه دمبل</strong><small dir="ltr" lang="en">Dumbbell Bench Press</small></div>
+            <div className="showcase-label"><span><CalendarDays /> شنبه · سینه، پشت و سرشانه</span><strong>پرس سینه دمبل</strong><small dir="ltr" lang="en">Dumbbell Bench Press</small></div>
             <div className="showcase-prescription"><span><b>۳</b> ست</span><span><b>۸–۱۲</b> تکرار</span><button type="button" aria-label="پخش آموزش"><Play /></button></div>
           </div>
           <div className="showcase-footer"><Target /><div><strong>عضلات هدف</strong><span>سینه · پشت بازو · سرشانه جلویی</span></div></div>

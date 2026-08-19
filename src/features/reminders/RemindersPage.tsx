@@ -9,6 +9,7 @@ import { browserNotificationProvider } from "@/lib/notifications/provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { faDigits } from "@/lib/format";
 
 export function RemindersPage() {
   const { state, addReminder, toggleReminder } = useAppStore();
@@ -34,7 +35,7 @@ export function RemindersPage() {
             {state.reminders.map((reminder) => (
               <div className="reminder-row" key={reminder.id}>
                 <div className="split">
-                  <div><strong>{reminder.title}</strong><p className="muted-dark">{reminder.day} - {reminder.time}</p></div>
+                  <div><strong>{reminder.title}</strong><p className="muted-dark">{reminder.day} - {faDigits(reminder.time)}</p></div>
                   <Button variant="ghost" onClick={() => toggleReminder(reminder.id)}>{reminder.active ? "فعال" : "خاموش"}</Button>
                 </div>
               </div>

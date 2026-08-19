@@ -13,13 +13,20 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { nf } from "@/lib/format";
+
+const intensityLabels = {
+  conservative_rir: "محافظه‌کارانه",
+  moderate_rir: "متوسط رو به سخت",
+  near_failure: "بسیار سخت",
+};
 
 export function AdminPage() {
   const { state, addCoachMethodology, reviewCoachMethodologyById, approveCoachMethodology, activateCoachMethodology, regenerateProgramWithActiveMethodology } = useAppStore();
   const [coachName, setCoachName] = useState("Coach Ali");
   const [title, setTitle] = useState("Upper/Lower Hypertrophy Method");
   const [audience, setAudience] = useState("Intermediate lifters, commercial gym, 4 days/week");
-  const [rawMethod, setRawMethod] = useState("Use upper lower for 4 training days. Moderate to high volume. Free weight compounds first, machines for accessories. Double progression. Keep 1-2 RIR for most sets and avoid failure for beginners. Add recovery/deload when performance drops.");
+  const [rawMethod, setRawMethod] = useState("برای چهار روز تمرین از تقسیم بالاتنه و پایین‌تنه استفاده شود. حجم تمرین متوسط رو به بالا باشد. حرکات اصلی با وزنه آزاد و حرکات کمکی با دستگاه انجام شوند. بیشتر ست‌ها با شدتی تمام شوند که کاربر حس کند یک تا دو تکرار دیگر می‌توانست انجام دهد. مبتدی‌ها تا ناتوانی کامل پیش نروند و هنگام افت عملکرد، ریکاوری یا هفته سبک اضافه شود.");
   const [wantsAiReview, setWantsAiReview] = useState(true);
   const allowed = state.user.role === "admin";
   const activeMethodology = state.coachMethodologies.find((methodology) => methodology.id === state.activeCoachMethodologyId);
@@ -31,7 +38,7 @@ export function AdminPage() {
           <>
             <div className="grid grid-3">
               <MetricCard label="کاربران" value="۱" helper="دمو" />
-              <MetricCard label="برنامه‌های تولیدشده" value="۱" helper={`نسخه ${state.program.version}`} />
+              <MetricCard label="برنامه‌های تولیدشده" value="۱" helper={`نسخه ${nf(state.program.version)}`} />
               <MetricCard label="روش فعال مربی" value={activeMethodology?.title ?? "ندارد"} helper={activeMethodology ? activeMethodology.coachName : "default rules"} />
             </div>
             <section className="light-panel mt-4">
@@ -68,7 +75,7 @@ export function AdminPage() {
                       <tbody>
                         <tr><th>Split</th><td>{activeMethodology.normalizedRules.preferredSplit}</td></tr>
                         <tr><th>Volume</th><td>{activeMethodology.normalizedRules.volumeBias}</td></tr>
-                        <tr><th>Intensity</th><td>{activeMethodology.normalizedRules.intensityStyle}</td></tr>
+                        <tr><th>شدت</th><td>{intensityLabels[activeMethodology.normalizedRules.intensityStyle]}</td></tr>
                         <tr><th>Progression</th><td>{activeMethodology.normalizedRules.progressionStyle}</td></tr>
                         <tr><th>Exercise bias</th><td>{activeMethodology.normalizedRules.exerciseBias}</td></tr>
                       </tbody>
@@ -106,7 +113,7 @@ export function AdminPage() {
               <section className="light-panel">
                 <h2>Foods</h2>
                 <Input placeholder="جستجو..." />
-                {foods.slice(0, 8).map((food) => <div className="meal-row" key={food.id}><div className="split"><strong>{food.nameFa}</strong><span>{food.calories} kcal</span></div></div>)}
+                {foods.slice(0, 8).map((food) => <div className="meal-row" key={food.id}><div className="split"><strong>{food.nameFa}</strong><span>{nf(food.calories)} کیلوکالری</span></div></div>)}
               </section>
               <section className="light-panel">
                 <h2>Knowledge Review</h2>
@@ -114,7 +121,7 @@ export function AdminPage() {
               </section>
               <section className="light-panel">
                 <h2>Program Rules</h2>
-                <table className="table"><tbody><tr><th>Protein min</th><td>1.6 g/kg</td></tr><tr><th>Max deficit</th><td>550 kcal</td></tr><tr><th>Beginner sets</th><td>2 per exercise</td></tr><tr><th>Progression</th><td>top reps + target RIR</td></tr></tbody></table>
+                <table className="table"><tbody><tr><th>حداقل پروتئین</th><td>۱٫۶ گرم به‌ازای هر کیلوگرم</td></tr><tr><th>بیشترین کسری</th><td>۵۵۰ کیلوکالری</td></tr><tr><th>ست مبتدی</th><td>۲ ست برای هر حرکت</td></tr><tr><th>پیشروی</th><td>بالاترین تکرار با شدت هدف</td></tr></tbody></table>
               </section>
             </div>
           </>

@@ -15,7 +15,7 @@ export function evaluateProgression(prescription: ExercisePrescription, sets: Wo
   const rirOk = completed.every((set) => set.rir >= prescription.rir && set.rir <= prescription.rir + 1);
   const underRecovered = completed.some((set) => set.rir <= 0 || set.reps < prescription.reps[0]);
   if (hitTopReps && rirOk) {
-    return { action: "increase_load", message: "تکرارهای بالای بازه با RIR هدف کامل شده؛ جلسه بعد کمی وزنه را افزایش بده.", suggestedPercentChange: 2.5 };
+    return { action: "increase_load", message: "تکرارهای بالای بازه با شدت هدف کامل شده؛ جلسه بعد کمی وزنه را افزایش بده.", suggestedPercentChange: 2.5 };
   }
   if (underRecovered) {
     return { action: "reduce_load", message: "شدت برای امروز بالا بوده؛ جلسه بعد وزنه یا ست را محافظه‌کارانه‌تر انتخاب کن.", suggestedPercentChange: -5 };
