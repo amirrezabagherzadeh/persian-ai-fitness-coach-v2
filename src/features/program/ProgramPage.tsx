@@ -1,15 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowLeft, CalendarDays, Check, ChevronLeft, Clock3, Dumbbell, Info, Play, Sparkles, Target } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { ExerciseDetailsButton } from "@/components/ExerciseDetailsButton";
+import { ExerciseDetailsButton, ExerciseMediaThumbnail } from "@/components/ExerciseDetailsButton";
 import { muscleLabel } from "@/components/MuscleMap";
 import { useAppStore } from "@/store/app-store";
 import { exercises } from "@/data/exercises";
-import { exerciseMedia } from "@/data/exercise-media";
 import { faDigits, nf } from "@/lib/format";
 
 const goalLabels = { fat_loss: "کاهش چربی", muscle_gain: "عضله‌سازی", recomposition: "فرم‌دهی بدن", strength: "افزایش قدرت", general_fitness: "آمادگی عمومی", maintenance: "حفظ وضعیت" };
@@ -53,13 +51,10 @@ export function ProgramPage() {
                 <div className="day-exercises">
                   {day.prescriptions.map((item) => {
                     const exercise = exerciseMap.get(item.exerciseId);
-                    const media = exercise ? exerciseMedia[exercise.id] : undefined;
                     if (!exercise) return null;
                     return (
                       <ExerciseDetailsButton exercise={exercise} profile={state.user} className="program-exercise" key={item.id}>
-                        <span className="exercise-thumb">
-                          {media?.frames ? <Image src={media.frames[0]} alt="" fill sizes="72px" /> : media?.animation ? <img src={media.animation} alt="" aria-hidden="true" loading="lazy" decoding="async" /> : <Dumbbell />}
-                        </span>
+                        <ExerciseMediaThumbnail exercise={exercise} />
                         <span className="exercise-identity"><strong>{exercise.nameFa}</strong><small dir="ltr" lang="en">{exercise.nameEn}</small></span>
                         <span className="exercise-muscle">{muscleLabel(exercise.primaryMuscles[0])}</span>
                         <span className="exercise-dose" aria-label={`${nf(item.sets)} ست، ${nf(item.reps[0])} تا ${nf(item.reps[1])} تکرار، ${nf(item.restSeconds)} ثانیه استراحت`}>

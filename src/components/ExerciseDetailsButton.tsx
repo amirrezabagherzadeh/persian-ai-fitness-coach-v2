@@ -51,10 +51,12 @@ function MotionGuide({ frames, exerciseName }: { frames: [string, string]; exerc
   );
 }
 
-function VideoGuide({ src, poster, exerciseName, orientation }: { src: string; poster?: string; exerciseName: string; orientation?: "portrait" | "landscape" }) {
+type MediaOrientation = "square" | "portrait" | "landscape";
+
+function VideoGuide({ src, poster, exerciseName, orientation }: { src: string; poster?: string; exerciseName: string; orientation?: MediaOrientation }) {
   return (
     <figure className="video-guide">
-      <div className={`video-stage ${orientation === "portrait" ? "portrait-video" : ""}`}>
+      <div className={`video-stage ${orientation ? `${orientation}-video` : ""}`}>
         <video autoPlay loop muted playsInline preload="metadata" poster={poster} aria-label={`ویدیوی آموزشی بی‌صدای اجرای ${exerciseName}`} controlsList="nodownload noplaybackrate noremoteplayback" disablePictureInPicture disableRemotePlayback tabIndex={-1} onContextMenu={(event) => event.preventDefault()}>
           <source src={src} type="video/mp4" />
           مرورگر شما امکان پخش این ویدیو را ندارد.
@@ -66,13 +68,13 @@ function VideoGuide({ src, poster, exerciseName, orientation }: { src: string; p
   );
 }
 
-function AnimationGuide({ src, exerciseName, orientation }: { src: string; exerciseName: string; orientation?: "portrait" | "landscape" }) {
+function AnimationGuide({ src, exerciseName, orientation }: { src: string; exerciseName: string; orientation?: MediaOrientation }) {
   return (
     <figure className="video-guide">
-      <div className={`video-stage animation-stage ${orientation === "portrait" ? "portrait-video" : ""}`}>
+      <div className={`video-stage animation-stage ${orientation ? `${orientation}-video` : ""}`}>
         {/* Animated GIFs are intentionally served as-is; image optimization would freeze the animation. */}
         <img src={src} alt={`نمایش متحرک اجرای ${exerciseName}`} loading="eager" decoding="async" />
-        <span className="video-badge"><Play /> نمایش متحرک اجرای کامل</span>
+        <span className="video-badge"><Play /> ویدیوی آموزشی حرکت</span>
       </div>
       <figcaption>چند تکرار را کامل ببین و به مسیر وزنه، مفصل‌ها و سرعت برگشت توجه کن.</figcaption>
     </figure>
@@ -86,6 +88,25 @@ export function ExerciseMediaPreview({ exercise }: { exercise: Exercise }) {
   if (media.video) return <VideoGuide src={media.video} poster={media.frames?.[0]} exerciseName={exercise.nameFa} orientation={media.videoOrientation} />;
   if (media.animation) return <AnimationGuide src={media.animation} exerciseName={exercise.nameFa} orientation={media.animationOrientation} />;
   return media.frames ? <MotionGuide frames={media.frames} exerciseName={exercise.nameFa} /> : null;
+}
+
+export function ExerciseMediaThumbnail({ exercise }: { exercise: Exercise }) {
+  const media = exerciseMedia[exercise.id];
+
+  return (
+    <span className="exercise-thumb" aria-hidden="true">
+      {media?.animation ? (
+        <img src={media.animation} alt="" loading="lazy" decoding="async" />
+      ) : media?.video ? (
+        <video autoPlay loop muted playsInline preload="metadata" poster={media.frames?.[0]} tabIndex={-1}>
+          <source src={media.video} type="video/mp4" />
+        </video>
+      ) : media?.frames ? (
+        <Image src={media.frames[0]} alt="" fill sizes="72px" />
+      ) : null}
+      <span className="exercise-preview-play"><Play /></span>
+    </span>
+  );
 }
 
 export function ExerciseDetailsButton({ exercise, profile, className, children }: { exercise: Exercise; profile?: UserProfile; className?: string; children: React.ReactNode }) {

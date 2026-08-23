@@ -496,9 +496,11 @@
   .day-status svg { @apply size-3.5; }
   .day-exercises { @apply divide-y divide-border; }
   .program-exercise { @apply grid w-full grid-cols-[56px_minmax(0,1fr)_44px] items-center gap-3 rounded-none px-4 py-4 text-start transition-colors hover:bg-muted/35 focus-visible:bg-muted/35 sm:grid-cols-[64px_minmax(150px,1fr)_minmax(90px,.55fr)_minmax(250px,.9fr)_44px] sm:px-5; }
-  .exercise-thumb { @apply relative grid size-14 overflow-hidden rounded-lg bg-muted sm:size-16; }
-  .exercise-thumb img { @apply object-cover; }
+  .exercise-thumb { @apply relative grid size-14 shrink-0 overflow-hidden rounded-xl border bg-muted shadow-sm sm:size-16; }
+  .exercise-thumb img, .exercise-thumb video { @apply h-full w-full object-cover; }
   .exercise-thumb > svg { @apply m-auto size-5; }
+  .exercise-preview-play { @apply absolute end-1.5 bottom-1.5 grid size-6 place-items-center rounded-full bg-primary text-primary-foreground shadow-md ring-2 ring-background/80; }
+  .exercise-preview-play svg { @apply size-2.5 fill-current; }
   .exercise-identity { @apply grid min-w-0 items-center gap-0.5 text-center; }
   .exercise-identity strong { @apply text-sm; }
   .exercise-identity small { @apply truncate text-center text-[11px] text-muted-foreground; }
@@ -523,6 +525,12 @@
   .session-summary svg { @apply size-4 text-primary; }
   .exercise-title-button > span:first-child { @apply grid gap-0.5; }
   .exercise-title-button small { @apply text-start text-[11px] font-normal text-muted-foreground; }
+  .day-exercise-tutorial { @apply grid min-w-0 flex-1 grid-cols-[56px_minmax(0,1fr)] items-center gap-3 rounded-xl p-1 text-start transition-colors hover:bg-muted/60 focus-visible:bg-muted/60 sm:grid-cols-[64px_minmax(0,1fr)_auto]; }
+  .day-exercise-copy { @apply grid min-w-0 gap-0.5; }
+  .day-exercise-copy h3 { @apply truncate text-base; }
+  .day-exercise-copy small { @apply truncate text-start text-[11px] text-muted-foreground; }
+  .day-exercise-watch { @apply col-start-2 inline-flex items-center gap-1.5 text-xs font-bold text-primary sm:col-start-3; }
+  .day-exercise-watch svg { @apply size-3.5 fill-current; }
 
   .guided-workout { @apply pb-8; }
   .guided-header { @apply mb-5 grid grid-cols-[1fr_auto] items-end gap-x-4 gap-y-4 rounded-2xl border bg-card p-5 sm:p-6; }
@@ -666,6 +674,7 @@
   .exercise-visuals { @apply grid gap-7 border-b bg-muted/30 p-4 sm:p-5; }
   .video-guide, .motion-guide { @apply m-0 grid gap-3; }
   .video-stage { @apply relative mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border bg-black shadow-2xl shadow-black/25; aspect-ratio: 16 / 9; }
+  .video-stage.square-video { max-width: min(100%, 560px); aspect-ratio: 1 / 1; }
   .video-stage video { @apply h-full w-full object-contain; pointer-events: none; }
   .animation-stage { @apply grid place-items-center bg-[#f5f5f3]; }
   .animation-stage img { @apply h-full w-full object-contain; }
@@ -747,10 +756,6 @@
   .prescription-strip b { @apply text-2xl; }
   .movement-complete-stage .guided-primary-button { @apply w-full; }
   .guided-sidebar-card { @apply order-2; }
-}
-
-@media (max-width: 1023px) {
-  .video-stage.portrait-video { max-width: min(100%, 430px); aspect-ratio: 9 / 16; }
 }
 
 @media (prefers-reduced-motion: reduce) {

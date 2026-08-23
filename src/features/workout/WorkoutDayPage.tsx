@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowRight, Clock3, Dumbbell, Play } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { PageHeader } from "@/components/PageHeader";
-import { ExerciseDetailsButton } from "@/components/ExerciseDetailsButton";
+import { ExerciseDetailsButton, ExerciseMediaThumbnail } from "@/components/ExerciseDetailsButton";
 import { IntensityGuidance } from "@/components/IntensityGuidance";
 import { useAppStore } from "@/store/app-store";
 import { faDigits, nf } from "@/lib/format";
@@ -26,16 +26,16 @@ export function WorkoutDayPage({ id }: { id: string }) {
             return (
               <article className="exercise-row" key={item.id}>
                 <div className="split">
-                  <div>
-                    {exercise ? (
-                      <ExerciseDetailsButton exercise={exercise} profile={state.user} className="exercise-title-button">
-                        <span><h3>{nf(item.order)}. {exercise.nameFa}</h3><small dir="ltr" lang="en">{exercise.nameEn}</small></span><span>دیدن آموزش</span>
-                      </ExerciseDetailsButton>
-                    ) : <h3>{nf(item.order)}. {item.exerciseId}</h3>}
-                    <p className="muted-dark">{exercise?.instructions.join(" ")}</p>
-                  </div>
+                  {exercise ? (
+                    <ExerciseDetailsButton exercise={exercise} profile={state.user} className="day-exercise-tutorial">
+                      <ExerciseMediaThumbnail exercise={exercise} />
+                      <span className="day-exercise-copy"><h3>{nf(item.order)}. {exercise.nameFa}</h3><small dir="ltr" lang="en">{exercise.nameEn}</small></span>
+                      <span className="day-exercise-watch"><Play /> دیدن آموزش</span>
+                    </ExerciseDetailsButton>
+                  ) : <h3>{nf(item.order)}. {item.exerciseId}</h3>}
                   <span className="tag">{nf(item.sets)} ست</span>
                 </div>
+                <p className="muted-dark">{exercise?.instructions.join(" ")}</p>
                 <p>{nf(item.reps[0])} تا {nf(item.reps[1])} تکرار، استراحت {nf(item.restSeconds)} ثانیه</p>
                 <IntensityGuidance remainingReps={item.rir} compact />
                 <details>
