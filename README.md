@@ -1,14 +1,15 @@
-<div align="center" dir="rtl">
-  <img src="./public/icons/icon.svg" width="72" height="72" alt="نشان Gym Coach" />
-  <h1>Gym Coach — برنامه تمرینی شخصی‌سازی‌شده</h1>
-  <p><strong>یک تجربه‌ی فارسی و راست‌به‌چپ که مسیر عضو را از چند پاسخ کوتاه تا اجرای مطمئنِ هر ست در باشگاه همراهی می‌کند.</strong></p>
+<div align="center">
+  <p><strong>English</strong> · <a href="./README.fa.md">فارسی</a></p>
+  <img src="./public/icons/icon.svg" width="72" height="72" alt="Gym Coach logo" />
+  <h1>Gym Coach — Personalised Workout Planning</h1>
+  <p><strong>A Persian-first, RTL workout experience that guides a gym member from a few useful answers to confidently completing every set.</strong></p>
 
   <p>
-    <a href="#مسیر-محصول">مسیر محصول</a> ·
-    <a href="#راهنمای-تصویری">راهنمای تصویری</a> ·
-    <a href="#تصمیمهای-uiux">تصمیم‌های UI/UX</a> ·
-    <a href="#معماری">معماری</a> ·
-    <a href="#شروع-سریع">شروع سریع</a>
+    <a href="#product-at-a-glance">Product</a> ·
+    <a href="#product-journey">Journey</a> ·
+    <a href="#uiux-decisions">UI/UX</a> ·
+    <a href="#architecture">Architecture</a> ·
+    <a href="#quick-start">Quick start</a>
   </p>
 
   <p>
@@ -21,29 +22,27 @@
 
 <br />
 
-<div dir="rtl">
+## Product at a glance
 
-## محصول، در یک نگاه
+Gym Coach is a **workouts-focused MVP** for gym members. Rather than showing a static spreadsheet, it uses each member’s goal, ability, available time, training preference, and safety constraints to create an actionable four-week training cycle. During a session, members log sets, weight, reps, and intensity, while each exercise offers visual instruction, targeted muscles, and common mistakes.
 
-Gym Coach یک MVP **تمرین‌محور** برای اعضای باشگاه است. محصول به‌جای نمایش یک جدول ثابت، با درک هدف، توان، زمان، سبک تمرین و محدودیت‌های کاربر، یک دوره‌ی چهار هفته‌ای قابل اجرا می‌سازد. در لحظه‌ی تمرین، کاربر ست، وزنه، تکرار و شدت را ثبت می‌کند و برای هر حرکت به آموزش تصویری، عضلات درگیر و خطاهای رایج دسترسی دارد.
-
-> هدف محصول ساختن «برنامه‌ی بی‌نقص روی کاغذ» نیست؛ هدف، ساختن تجربه‌ای است که در باشگاه واقعی قابل فهم، قابل اجرا و قابل ادامه باشد.
+> The goal is not a perfect plan on paper. It is a training experience that is easy to understand, practical in a real gym, and sustainable over time.
 
 <table>
   <thead>
-    <tr><th align="right">تمرکز نسخه‌ی فعلی</th><th align="right">مرز روشن MVP</th></tr>
+    <tr><th align="left">Current focus</th><th align="left">Clear MVP boundary</th></tr>
   </thead>
   <tbody>
     <tr>
-      <td>شخصی‌سازی برنامه، راهنمای حرکت و ثبت تمرین در یک مسیر فارسی و راست‌به‌چپ.</td>
-      <td>حساب، داده و برنامه در مرورگر کاربر ذخیره می‌شوند؛ این نسخه هنوز به Auth، دیتابیس یا AI production متصل نیست.</td>
+      <td>Personalised programming, in-context exercise guidance, and workout logging in a Persian RTL experience.</td>
+      <td>Accounts, program data, and workout data are stored in the browser. This version is not yet connected to production Auth, a database, or an AI service.</td>
     </tr>
   </tbody>
 </table>
 
-## مسیر محصول
+## Product journey
 
-<pre dir="ltr">
+<pre>
  ┌───────────┐   ┌─────────────────┐   ┌───────────────────┐
  │  Landing  │ → │ Signup / Login  │ → │  6-step assessment │
  └───────────┘   └─────────────────┘   └─────────┬─────────┘
@@ -62,125 +61,101 @@ Gym Coach یک MVP **تمرین‌محور** برای اعضای باشگاه ا
                   └───────────────────────► completed workout ◄───────────┘
 </pre>
 
-### ۱. شروع با وعده‌ی روشن
+### 1. A clear promise from the first screen
 
-صفحه‌ی نخست به‌جای معرفی طولانی، ارزش محصول را در چند ثانیه نشان می‌دهد: برنامه چهار هفته‌ای، مخصوص باشگاه، همراه با آموزش تصویری. کارت پیش‌نمایش برنامه، نتیجه‌ی نهایی را پیش از درخواست اطلاعات شخصی قابل لمس می‌کند.
+The landing page communicates the value in seconds: a four-week plan, designed for the gym, with visual exercise guidance. The program preview makes the end result tangible before asking the member for personal information.
 
-<img src="./public/screenshots/01-landing.png" alt="صفحه نخست Gym Coach با پیش‌نمایش برنامه و مسیر سه‌مرحله‌ای عضو" width="100%" />
+<img src="./public/screenshots/01-landing.png" alt="Gym Coach landing page with a program preview and a three-step member journey" width="100%" />
 
-### ۲. ارزیابی کوتاه، هر پاسخ با اثر مشخص
+### 2. A short assessment where every answer has an effect
 
-ارزیابی در شش گام، فقط اطلاعاتی را می‌گیرد که مستقیم روی برنامه اثر دارند: هدف، داده‌های پایه، سابقه، ظرفیت هفتگی، سبک تمرین و محدودیت‌های ایمنی. نمایش پیشرفت و برچسب هر مرحله، بار ذهنی را کاهش می‌دهد و به کاربر می‌گوید کجای مسیر قرار دارد.
+The six-step assessment asks only for details that change the program: goal, baseline data, experience, weekly capacity, training style, and safety constraints. Progress feedback and named steps lower cognitive load and show members exactly where they are in the flow.
 
-<img src="./public/screenshots/02-onboarding.png" alt="گام اول ارزیابی با انتخاب هدف و نواحی اولویت‌دار" width="100%" />
+<img src="./public/screenshots/02-onboarding.png" alt="First assessment step for choosing a goal and priority muscle areas" width="100%" />
 
-### ۳. برنامه‌ای که قابل اسکن است
+### 3. A plan designed to be scanned
 
-برنامه‌ی تولیدشده یک چرخه‌ی چهار هفته‌ای را با تقویم، تعداد جلسات، زمان تخمینی، حرکت‌ها، ست، تکرار، استراحت و RIR نشان می‌دهد. کارت هر روز یک اقدام اصلی دارد: دیدن جزئیات یا شروع تمرین؛ اطلاعات حرفه‌ای نیز بدون شلوغ کردن رابط کنار همان حرکت قرار گرفته‌اند.
+The generated plan presents a four-week cycle with a calendar, session count, estimated duration, exercises, sets, reps, rest, and RIR. Every training-day card has one primary action—open details or start the workout—while the more technical information stays close to the relevant exercise without crowding the interface.
 
-<img src="./public/screenshots/03-program.png" alt="برنامه چهار هفته‌ای تمرین با جلسه‌های بالاتنه و پایین‌تنه" width="100%" />
+<img src="./public/screenshots/03-program.png" alt="Four-week workout program with upper- and lower-body training sessions" width="100%" />
 
-### ۴. آموزش حرکت در همان زمینه
+### 4. Exercise instruction without leaving the task
 
-کاربر برای فهمیدن حرکت از مسیر تمرین خارج نمی‌شود. پنجره‌ی آموزش، حالت شروع و پایان، نمایش متحرک، نکته‌های اجرای مبتدی، خطاهای رایج، نقشه‌ی عضلات و چرای انتخاب حرکت را یک‌جا نشان می‌دهد. این تصمیم، جست‌وجوی بیرونی و تردید هنگام اولین اجرای حرکت را کم می‌کند.
+Members do not need to leave their program to understand an exercise. The instruction dialog brings together start and end positions, an animated demonstration, beginner cues, common mistakes, a muscle map, and the reason that exercise was selected. This reduces external searching and uncertainty before the first set.
 
-<img src="./public/screenshots/04-exercise-instruction.png" alt="راهنمای تصویری پرس سینه هالتر با فریم‌ها، خطاهای رایج و نقشه عضلات" width="100%" />
+<img src="./public/screenshots/04-exercise-instruction.png" alt="Barbell bench press visual guide with frames, common mistakes, and a muscle map" width="100%" />
 
-### ۵. ثبت تمرین با داده‌های لازم، نه بیشتر
+### 5. Log the necessary data—nothing more
 
-در صفحه‌ی تمرین، هر ست دارای سه ورودی ساده است: وزنه، تکرار و RIR. ثبت ست، تایمر استراحت را با زمان مناسب همان حرکت آغاز می‌کند؛ پایین صفحه نیز حجم تمرین و پایان جلسه را جمع‌بندی می‌کند. RIR به کاربر می‌گوید چه میزان توان باقی‌مانده هدف است، بدون اینکه مجبور به تمرین تا ناتوانی شود.
+Each set uses three simple inputs: weight, repetitions, and RIR. Recording a set starts a rest timer using that exercise’s recommended rest time; the session summary tracks total volume and makes completion clear. RIR tells members how much effort should remain without forcing them to train to failure.
 
-<img src="./public/screenshots/05-workout-logging.png" alt="صفحه ثبت ست‌های تمرین با وزنه، تکرار، RIR و تایمر استراحت" width="100%" />
+<img src="./public/screenshots/05-workout-logging.png" alt="Workout logging page with weight, repetitions, RIR, and rest timer" width="100%" />
 
-## تصمیم‌های UI/UX
+## UI/UX decisions
 
 <table>
   <thead>
-    <tr><th align="right">تصمیم</th><th align="right">چرا مهم است</th><th align="right">نمود آن در رابط</th></tr>
+    <tr><th align="left">Decision</th><th align="left">Why it matters</th><th align="left">How it appears</th></tr>
   </thead>
   <tbody>
-    <tr>
-      <td><strong>اول امروز، بعد جزئیات</strong></td>
-      <td>کاربر باشگاه می‌خواهد فوراً بداند چه کاری انجام دهد، نه اینکه در ساختار برنامه گم شود.</td>
-      <td>CTA واضح «شروع تمرین»، جلسه‌ی قابل اسکن و مسیر مستقیم به ثبت ست.</td>
-    </tr>
-    <tr>
-      <td><strong>هر سؤال باید نتیجه داشته باشد</strong></td>
-      <td>گرفتن اطلاعات بی‌اثر، اعتماد و نرخ تکمیل را کم می‌کند.</td>
-      <td>هدف، تجربه، روزهای تمرین، زمان، سبک و محدودیت‌ها مستقیماً Split، حجم، حرکت‌ها و شدت را تغییر می‌دهند.</td>
-    </tr>
-    <tr>
-      <td><strong>فارسی واقعی، نه ترجمه‌ی سطحی</strong></td>
-      <td>خواندن سریع در صفحه‌ی کوچک، به زبان و جهت درست وابسته است.</td>
-      <td><code>RTL</code>، Vazirmatn، اعداد فارسی و نام‌های واضح؛ نام انگلیسی حرکت فقط به‌عنوان اطلاعات کمکی نمایش داده می‌شود.</td>
-    </tr>
-    <tr>
-      <td><strong>تکنیک پیش از فشار</strong></td>
-      <td>برای عضو تازه‌کار، دانستن فرم امن مهم‌تر از افزایش سریع وزنه است.</td>
-      <td>آموزش بصری، خطاهای رایج، نقشه عضلات، هشدار ایمنی و هدف RIR کنار حرکت قرار دارند.</td>
-    </tr>
-    <tr>
-      <td><strong>ثبت با حداقل اصطکاک</strong></td>
-      <td>اگر ثبت ست زمان‌بر باشد، داده‌ی واقعی برای پیشرفت از دست می‌رود.</td>
-      <td>فیلدهای وزنه/تکرار/RIR، دکمه‌ی تک‌ضربه‌ای ثبت ست و تایمر خودکار استراحت.</td>
-    </tr>
-    <tr>
-      <td><strong>رنگ به‌عنوان نشانه‌ی اقدام</strong></td>
-      <td>رابط باید در یک نگاه قابل تصمیم‌گیری باشد.</td>
-      <td>پس‌زمینه‌ی تیره‌ی کم‌حواس‌پرتی و نارنجی گرم برای CTA، وضعیت فعال و نقاط پیشرفت.</td>
-    </tr>
+    <tr><td><strong>Today before details</strong></td><td>A gym member needs to know what to do next, not get lost in program structure.</td><td>A direct Start Workout CTA, scannable sessions, and a short path to set logging.</td></tr>
+    <tr><td><strong>Every question earns its place</strong></td><td>Questions with no visible consequence reduce trust and completion.</td><td>Goal, experience, days, duration, style, and constraints directly affect split, volume, exercise selection, and intensity.</td></tr>
+    <tr><td><strong>Persian-native, not superficial translation</strong></td><td>Fast reading on a small screen depends on the correct language and direction.</td><td><code>RTL</code>, Vazirmatn, Persian numerals, and clear local labels; English exercise names are supportive metadata only.</td></tr>
+    <tr><td><strong>Technique before load</strong></td><td>For a newer member, safe form matters more than rapidly increasing weight.</td><td>Visual education, common mistakes, muscle maps, safety guidance, and an RIR target stay beside the exercise.</td></tr>
+    <tr><td><strong>Low-friction logging</strong></td><td>If logging is slow, real performance data is lost.</td><td>Weight/reps/RIR fields, a one-tap set action, and an automatic rest timer.</td></tr>
+    <tr><td><strong>Colour signals action</strong></td><td>The interface must support quick decisions at a glance.</td><td>A low-distraction dark surface with warm orange for CTAs, active states, and progress moments.</td></tr>
   </tbody>
 </table>
 
 <details>
-  <summary><strong>منطق شخصی‌سازی برنامه چگونه کار می‌کند؟</strong></summary>
+  <summary><strong>How does program personalisation work?</strong></summary>
   <br />
-  موتور قطعی برنامه‌سازی ابتدا حرکت‌ها را با توجه به تجهیزات باشگاه، سطح تجربه و پرچم‌های ایمنی فیلتر می‌کند. سپس هدف، عضلات اولویت‌دار و سبک مورد علاقه، ترتیب انتخاب حرکت‌ها را تغییر می‌دهند. تعداد روزهای تمرین، Split را تعیین می‌کند؛ زمان جلسه سقف تعداد حرکت‌هاست؛ سطح و هدف، تعداد ست، بازه تکرار، RIR و استراحت را تنظیم می‌کنند. نتیجه یک برنامه‌ی چهار هفته‌ای است که قابل توضیح و قابل آزمون باقی می‌ماند.
+  The deterministic planning engine first filters exercises by gym equipment, experience level, and safety flags. It then changes exercise priority using the member’s goal, focus muscles, and preferred training style. Training days determine the split; session duration caps the exercise count; and experience plus goal set the volume, rep ranges, RIR, and rest. The result is a four-week program that remains explainable and testable.
 </details>
 
-## معماری
+## Architecture
 
 <table>
   <thead>
-    <tr><th align="right">لایه</th><th align="right">مسئولیت</th><th align="right">مسیرها</th></tr>
+    <tr><th align="left">Layer</th><th align="left">Responsibility</th><th align="left">Location</th></tr>
   </thead>
   <tbody>
-    <tr><td><strong>App Router</strong></td><td>مسیرهای محصول، layout و PWA manifest</td><td><code>src/app</code></td></tr>
-    <tr><td><strong>Features</strong></td><td>Landing، احراز هویت دمو، onboarding، برنامه، پروفایل و تمرین فعال</td><td><code>src/features</code></td></tr>
-    <tr><td><strong>Domain</strong></td><td>تولید برنامه، فیلتر ایمنی حرکت، RIR، progression و مدل‌های محصول</td><td><code>src/domain</code></td></tr>
-    <tr><td><strong>Data</strong></td><td>حرکت‌ها، رسانه‌های آموزشی و داده‌های دمو</td><td><code>src/data</code> · <code>public/exercises</code></td></tr>
-    <tr><td><strong>Store</strong></td><td>حساب دمو، پروفایل، برنامه و لاگ تمرین با ماندگاری مرورگر</td><td><code>src/store/app-store.tsx</code></td></tr>
+    <tr><td><strong>App Router</strong></td><td>Product routes, layout, and PWA manifest</td><td><code>src/app</code></td></tr>
+    <tr><td><strong>Features</strong></td><td>Landing, demo auth, onboarding, program, profile, and active workout surfaces</td><td><code>src/features</code></td></tr>
+    <tr><td><strong>Domain</strong></td><td>Program generation, safety filtering, RIR, progression, and product models</td><td><code>src/domain</code></td></tr>
+    <tr><td><strong>Data</strong></td><td>Exercises, instructional media, and demo data</td><td><code>src/data</code> · <code>public/exercises</code></td></tr>
+    <tr><td><strong>Store</strong></td><td>Demo account, profile, program, and workout log with browser persistence</td><td><code>src/store/app-store.tsx</code></td></tr>
   </tbody>
 </table>
 
-### مرز مسئولیت AI و منطق برنامه
+### AI boundary and training logic
 
-منطق تمرین — انتخاب حرکت، فیلتر محدودیت، حجم، RIR و progression — در توابع TypeScript قطعی است تا قابل آزمون و قابل توضیح بماند. این نسخه‌ی تمرین‌محور به هیچ API یا مدل AI برای تولید تصمیم‌های اصلی وابسته نیست.
+Core training decisions—exercise selection, constraint filtering, volume, RIR, and progression—are deterministic TypeScript functions so they remain testable and explainable. This workouts-focused version does not depend on an AI API or model to make those primary decisions.
 
-## مسیرهای اصلی
+## Main routes
 
 <table>
   <tbody>
-    <tr><td><code>/</code></td><td>Landing و وعده‌ی محصول</td></tr>
-    <tr><td><code>/auth/signup</code> · <code>/auth/login</code></td><td>ورود و ساخت حساب دمو</td></tr>
-    <tr><td><code>/onboarding</code></td><td>ارزیابی شش‌مرحله‌ای</td></tr>
-    <tr><td><code>/program</code></td><td>برنامه‌ی چهار هفته‌ای و راهنمای حرکت</td></tr>
-    <tr><td><code>/program/day/[dayId]</code></td><td>جزئیات جلسه</td></tr>
-    <tr><td><code>/workout/[sessionId]</code></td><td>ثبت تمرین، ست و تایمر استراحت</td></tr>
-    <tr><td><code>/profile</code></td><td>مرور یا ویرایش ورودی‌های اثرگذار بر برنامه</td></tr>
+    <tr><td><code>/</code></td><td>Landing page and product promise</td></tr>
+    <tr><td><code>/auth/signup</code> · <code>/auth/login</code></td><td>Demo account creation and sign-in</td></tr>
+    <tr><td><code>/onboarding</code></td><td>Six-step member assessment</td></tr>
+    <tr><td><code>/program</code></td><td>Four-week plan and exercise guidance</td></tr>
+    <tr><td><code>/program/day/[dayId]</code></td><td>Workout-day details</td></tr>
+    <tr><td><code>/workout/[sessionId]</code></td><td>Workout, set logging, and rest timing</td></tr>
+    <tr><td><code>/profile</code></td><td>Review or update program-driving member inputs</td></tr>
   </tbody>
 </table>
 
-## شروع سریع
+## Quick start
 
 ```bash
 npm install
 npm run dev -- -p 3000
 ```
 
-سپس <a href="http://localhost:3000">http://localhost:3000</a> را باز کنید.
+Then open <a href="http://localhost:3000">http://localhost:3000</a>.
 
-### بررسی کیفیت
+### Quality checks
 
 ```bash
 npm run typecheck
@@ -188,26 +163,21 @@ npm run test
 npm run build
 ```
 
-## وضعیت MVP و گام‌های بعد
+## MVP status and next steps
 
 <table>
   <thead>
-    <tr><th align="right">هم‌اکنون</th><th align="right">برای مسیر کامل‌تر</th></tr>
+    <tr><th align="left">Available now</th><th align="left">Next for a fuller journey</th></tr>
   </thead>
   <tbody>
-    <tr>
-      <td>برنامه‌سازی شخصی، راهنمای تصویری حرکت، ثبت ست، RIR، تایمر استراحت، PWA و persistence محلی.</td>
-      <td>همگام‌سازی بین دستگاه‌ها، ذخیره‌ی واقعی هر ست، برنامه‌ی کوتاه و جایگزین حرکت، چک‌این هفتگی و بازخورد پایدار پس از پایان تمرین.</td>
-    </tr>
+    <tr><td>Personalised programming, visual exercise guidance, set logging, RIR, rest timing, PWA support, and local persistence.</td><td>Cross-device synchronisation, durable per-set saves, short-session and exercise-swap flows, weekly check-ins, and durable post-workout feedback.</td></tr>
   </tbody>
 </table>
 
 <blockquote>
-  <strong>یادداشت ایمنی:</strong> این محصول ابزار همراه تمرین است و جایگزین ارزیابی پزشکی، تشخیص یا مربی حضوری نیست. در صورت درد شدید، آسیب تازه یا محدودیت پزشکی، تمرین باید با متخصص مربوطه بررسی شود.
+  <strong>Safety note:</strong> Gym Coach supports training; it does not replace medical assessment, diagnosis, or an in-person coach. A qualified professional should review training when there is severe pain, a new injury, or a medical restriction.
 </blockquote>
 
-## منابع رسانه‌ای
+## Media credits
 
-تصاویر مرجع شروع و پایان حرکت‌ها از دیتاست عمومی <a href="https://github.com/yuhonas/free-exercise-db">Free Exercise DB</a> می‌آیند و برای اجرای مستقل از API در <code>public/exercises</code> نگه‌داری می‌شوند. اسکرین‌شات‌های این README از نسخه‌ی محلی همین پروژه در مسیر <code>public/screenshots</code> گرفته شده‌اند.
-
-</div>
+Start/end exercise reference images come from the public <a href="https://github.com/yuhonas/free-exercise-db">Free Exercise DB</a> dataset and are kept in <code>public/exercises</code> so the experience works without an external media API. The README screenshots were captured from this project’s local build and live in <code>public/screenshots</code>.
