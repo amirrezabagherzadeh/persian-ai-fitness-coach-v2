@@ -3,68 +3,36 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ArrowLeft, Check, ChevronRight, Dumbbell, LockKeyhole, MessageSquareText, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowLeft, Check, Dumbbell, Eye, EyeOff, ShieldCheck, Sparkles } from "lucide-react";
 import { useAppStore } from "@/store/app-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { nf } from "@/lib/format";
 import { Label } from "@/components/ui/label";
 
 export function AuthPage({ mode }: { mode: "login" | "signup" }) {
   const router = useRouter();
   const { ready, state, createLocalAccount, loginLocalAccount } = useAppStore();
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [code, setCode] = useState("");
-  const [step, setStep] = useState<"phone" | "code">("phone");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-
-  const normalizePhone = (value: string) => value
-    .trim()
-    .replace(/[۰-۹]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
-    .replace(/[٠-٩]/g, (digit) => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
-    .replace(/[\s-]/g, "")
-    .replace(/^\+98/, "0")
-    .replace(/^98/, "0");
-
-  const requestCode = () => {
-    setError("");
-    if (mode === "signup" && !name.trim()) return setError("نام و نام خانوادگی را وارد کن.");
-    const normalizedPhone = normalizePhone(phone);
-    if (!/^09\d{9}$/.test(normalizedPhone)) return setError("شماره موبایل را به شکل ۰۹۱۲۱۲۳۴۵۶۷ وارد کن.");
-    setPhone(normalizedPhone);
-    setStep("code");
-  };
-
-  const updateCodeDigit = (index: number, value: string) => {
-    const digit = normalizePhone(value).replace(/\D/g, "").slice(-1);
-    const digits = Array.from({ length: 4 }, (_, digitIndex) => code[digitIndex] ?? "");
-    digits[index] = digit;
-    setCode(digits.join(""));
-    if (digit && index < 3) document.getElementById(`code-${index + 1}`)?.focus();
-  };
-
-  const pasteCode = (event: React.ClipboardEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    const pasted = normalizePhone(event.clipboardData.getData("text")).replace(/\D/g, "").slice(0, 4);
-    if (!pasted) return;
-    setCode(pasted);
-    document.getElementById(`code-${Math.min(pasted.length, 4) - 1}`)?.focus();
-  };
 
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
-    if (step === "phone") return requestCode();
-    if (normalizePhone(code) !== "1323") return setError("کد تأیید درست نیست. برای این نسخه، کد ۱۳۲۳ است.");
+    if (!email.trim()) return setError("ایمیل را وارد کن.");
+    if (!/^\S+@\S+\.\S+$/.test(email.trim())) return setError("فرمت ایمیل درست نیست.");
+    if (password.length < 6) return setError("رمز عبور باید حداقل ۶ کاراکتر باشد.");
     if (mode === "signup") {
-      createLocalAccount(name, phone);
+      if (!name.trim()) return setError("نامت را وارد کن تا برنامه با نام خودت ساخته شود.");
+      createLocalAccount(name, email, password);
       router.push("/onboarding");
       return;
     }
     if (!ready) return setError("یک لحظه صبر کن تا حساب این مرورگر آماده شود.");
-    if (!loginLocalAccount(phone)) return setError("برای این شماره حسابی پیدا نشد. ابتدا ثبت‌نام کن.");
-    router.push(state.auth.onboardingCompleted ? "/dashboard" : "/onboarding");
+    if (!loginLocalAccount(email, password)) return setError("ایمیل یا رمز عبور درست نیست؛ یا ابتدا ثبت‌نام کن.");
+    router.push(state.auth.onboardingCompleted ? "/program" : "/onboarding");
   };
 
   return (
@@ -86,42 +54,12 @@ export function AuthPage({ mode }: { mode: "login" | "signup" }) {
 
       <section className="auth-form-side">
         <form className="auth-form" onSubmit={submit} noValidate>
-          <div className="auth-form-heading"><span className="auth-icon">{step === "code" ? <LockKeyhole /> : <MessageSquareText />}</span><div><p>{mode === "signup" ? "شروع برنامه اختصاصی" : "خوش برگشتی"}</p><h2>{step === "code" ? "کد تأیید را وارد کن" : mode === "signup" ? "با شماره موبایل ثبت‌نام کن" : "با شماره موبایل وارد شو"}</h2></div></div>
-          <div className="auth-progress" aria-label={step === "phone" ? "مرحله ورود شماره" : "مرحله تأیید کد"}><span className={step === "phone" ? "active" : "done"}>۱</span><i /><span className={step === "code" ? "active" : ""}>۲</span></div>
-          {step === "phone" ? <>
-            {mode === "signup" ? <div className="grid gap-2"><Label htmlFor="name">نام و نام خانوادگی</Label><Input id="name" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="مثلاً امیر رضایی" /></div> : null}
-            <div className="grid gap-2"><Label htmlFor="phone">شماره موبایل</Label><Input className="auth-phone-input" dir="ltr" id="phone" type="tel" inputMode="numeric" autoComplete="tel-national" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="۰۹۱۲۱۲۳۴۵۶۷" required /><span className="helper-text">کد ورود را به همین شماره می‌فرستیم.</span></div>
-          </> : <div className="auth-code-stage">
-            <p>کد تأیید ارسال شد. کد ارسال‌شده به <b dir="ltr">{phone}</b> را وارد کنید.</p>
-            <div className="grid gap-2">
-              <Label>کد ۴ رقمی</Label>
-              <div className="auth-code-inputs" dir="ltr">
-                {Array.from({ length: 4 }, (_, index) => (
-                  <Input
-                    key={index}
-                    className="auth-code-box"
-                    id={`code-${index}`}
-                    aria-label={`رقم ${nf(index + 1)} کد تأیید`}
-                    style={{ textAlign: "center", direction: "ltr" }}
-                    inputMode="numeric"
-                    autoComplete={index === 0 ? "one-time-code" : "off"}
-                    maxLength={1}
-                    autoFocus={index === 0}
-                    value={code[index] ?? ""}
-                    onPaste={pasteCode}
-                    onChange={(event) => updateCodeDigit(index, event.target.value)}
-                    onKeyDown={(event) => {
-                      if (event.key === "Backspace" && !code[index] && index > 0) document.getElementById(`code-${index - 1}`)?.focus();
-                    }}
-                    required
-                  />
-                ))}
-              </div>
-            </div>
-            <Button type="button" variant="ghost" className="auth-edit-phone" onClick={() => { setStep("phone"); setCode(""); }}><ChevronRight /> ویرایش شماره</Button>
-          </div>}
+          <div className="auth-form-heading"><span className="auth-icon"><Sparkles /></span><div><p>{mode === "signup" ? "شروع برنامه اختصاصی" : "خوش برگشتی"}</p><h2>{mode === "signup" ? "حساب رایگان بساز" : "وارد حساب شو"}</h2></div></div>
+          {mode === "signup" ? <div className="grid gap-2"><Label htmlFor="name">نام و نام خانوادگی</Label><Input id="name" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="مثلاً امیر رضایی" /></div> : null}
+          <div className="grid gap-2"><Label htmlFor="email">ایمیل</Label><Input className="text-left" dir="ltr" id="email" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="name@example.com" required /></div>
+          <div className="grid gap-2"><Label htmlFor="password">رمز عبور</Label><div className="password-field"><Input className="text-left pe-12" dir="ltr" id="password" type={showPassword ? "text" : "password"} autoComplete={mode === "signup" ? "new-password" : "current-password"} minLength={6} value={password} onChange={(event) => setPassword(event.target.value)} required /><button type="button" onClick={() => setShowPassword((current) => !current)} aria-label={showPassword ? "پنهان کردن رمز" : "نمایش رمز"}>{showPassword ? <EyeOff /> : <Eye />}</button></div><span className="helper-text">حداقل ۶ کاراکتر</span></div>
           {error ? <p className="form-error" role="alert">{error}</p> : null}
-          <Button className="auth-submit" size="lg" type="submit" disabled={!ready || (mode === "login" && step === "phone" && !phone)}>{step === "phone" ? "ارسال کد ورود" : mode === "signup" ? "تأیید و ادامه به ارزیابی" : "ورود به برنامه"}<ArrowLeft /></Button>
+          <Button className="auth-submit" size="lg" type="submit" disabled={mode === "login" && !ready}>{mode === "signup" ? "ادامه به ارزیابی" : "ورود به برنامه"}<ArrowLeft /></Button>
           <p className="auth-switch">{mode === "signup" ? "قبلاً حساب ساخته‌ای؟ " : "هنوز حساب نداری؟ "}<Link href={mode === "signup" ? "/auth/login" : "/auth/signup"}>{mode === "signup" ? "وارد شو" : "ثبت‌نام کن"}</Link></p>
         </form>
       </section>

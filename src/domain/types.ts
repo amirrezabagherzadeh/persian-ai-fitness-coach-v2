@@ -2,7 +2,7 @@ export type Sex = "male" | "female";
 export type Goal = "fat_loss" | "muscle_gain" | "recomposition" | "strength" | "general_fitness" | "maintenance";
 export type Experience = "never" | "beginner" | "intermediate" | "advanced";
 export type ActivityLevel = "sedentary" | "light" | "moderate" | "high" | "very_high";
-export type TrainingStyle = "balanced" | "machines" | "free_weights" | "calisthenics";
+export type TrainingStyle = "balanced" | "machines" | "free_weights";
 export type FocusArea = "chest" | "back" | "shoulders" | "arms" | "legs" | "glutes" | "core";
 export type InjuryFlag = "shoulder_pain" | "knee_pain" | "back_pain" | "elbow_pain" | "wrist_pain";
 export type Equipment =
@@ -15,15 +15,6 @@ export type Equipment =
   | "pullup_bar"
   | "machines"
   | "bodyweight";
-
-export type BodyMeasurements = {
-  weightKg?: number;
-  waistCm?: number;
-  armCm?: number;
-  chestCm?: number;
-  thighCm?: number;
-  recordedAt: string;
-};
 
 export type UserProfile = {
   id: string;
@@ -38,7 +29,6 @@ export type UserProfile = {
   armCm: number;
   chestCm?: number;
   thighCm?: number;
-  bodyBaseline?: BodyMeasurements;
   goal: Goal;
   targetWeightKg?: number;
   experience: Experience;
@@ -166,23 +156,8 @@ export type WorkoutSession = {
   dayId: string;
   startedAt: string;
   completedAt?: string;
-  durationMinutes?: number;
-  difficultyFeedback?: "easy" | "appropriate" | "too_hard";
   sets: WorkoutSet[];
   notes?: string;
-};
-
-export type ActiveWorkoutDraft = {
-  dayId: string;
-  startedAt: string;
-  updatedAt: string;
-  sets: WorkoutSet[];
-  exerciseIndex: number;
-  phase: "exercise" | "rest" | "transition" | "complete";
-  exerciseOverrides: Record<string, string>;
-  compact: boolean;
-  completedAt?: string;
-  difficultyFeedback?: WorkoutSession["difficultyFeedback"];
 };
 
 export type Food = {

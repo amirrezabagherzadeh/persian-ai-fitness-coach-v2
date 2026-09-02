@@ -1,6 +1,7 @@
 import type { CoachMethodology, Exercise, ExercisePrescription, FocusArea, TrainingDay, TrainingProgram, UserProfile } from "@/domain/types";
 import { exercises } from "@/data/exercises";
-import { nf } from "@/lib/format";
+
+const weekdayFa = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه"];
 
 export function chooseSplit(daysPerWeek: number, experience: UserProfile["experience"]): string {
   if (daysPerWeek <= 2) return "Full Body A/B";
@@ -63,8 +64,7 @@ function sortByProfilePreference(pool: Exercise[], profile: UserProfile): Exerci
       : profile.trainingStyle === "free_weights"
         ? exercise.equipment.some((item) => item === "barbell" || item === "dumbbells") ? 2 : 0
         : 0;
-    const calisthenicsScore = profile.trainingStyle === "calisthenics" && exercise.equipment.includes("bodyweight") ? 12 : 0;
-    return focusScore + styleScore + calisthenicsScore;
+    return focusScore + styleScore;
   };
   return [...pool].sort((a, b) => score(b) - score(a));
 }
@@ -74,32 +74,6 @@ function pickByPattern(pool: Exercise[], pattern: string, fallback: string, offs
   if (matches.length > 0) return matches[offset % matches.length];
   const fallbackMatches = pool.filter((item) => item.primaryMuscles.includes(fallback));
   return fallbackMatches[offset % fallbackMatches.length];
-}
-
-const muscleTitleGroups = [
-  { label: "سینه", muscles: new Set(["chest"]) },
-  { label: "پشت و زیربغل", muscles: new Set(["back", "lats", "mid_back", "rear_delts"]) },
-  { label: "سرشانه", muscles: new Set(["shoulders", "front_delts", "side_delts"]) },
-  { label: "بازو", muscles: new Set(["biceps", "triceps"]) },
-  { label: "پا", muscles: new Set(["quads", "hamstrings"]) },
-  { label: "عضلات سرینی", muscles: new Set(["glutes"]) },
-  { label: "میان‌تنه", muscles: new Set(["core"]) },
-];
-
-function joinFa(items: string[]) {
-  if (items.length <= 1) return items[0] ?? "تمرین کامل بدن";
-  return `${items.slice(0, -1).join("، ")} و ${items.at(-1)}`;
-}
-
-export function trainingDayTitle(dayExercises: Exercise[]) {
-  const primaryMuscles = new Set(dayExercises.flatMap((exercise) => exercise.primaryMuscles));
-  const labels = muscleTitleGroups
-    .filter((group) => [...group.muscles].some((muscle) => primaryMuscles.has(muscle)))
-    .map((group) => group.label);
-  const hasUpperBody = labels.some((label) => ["سینه", "پشت و زیربغل", "سرشانه", "بازو"].includes(label));
-  const hasLowerBody = labels.some((label) => ["پا", "عضلات سرینی"].includes(label));
-  if (hasUpperBody && hasLowerBody && labels.length >= 4) return "تمرین کامل بدن";
-  return joinFa(labels);
 }
 
 function prescription(exercise: Exercise, index: number, profile: UserProfile, methodology?: CoachMethodology): ExercisePrescription {
@@ -138,39 +112,37 @@ export function generateTrainingProgram(profile: UserProfile, methodology?: Coac
   const dayCount = Math.min(6, Math.max(2, profile.daysPerWeek));
   const exerciseLimit = profile.sessionMinutes <= 45 ? 4 : profile.sessionMinutes <= 60 ? 5 : 6;
   const compact = (items: Array<Exercise | undefined>) => items.filter((item): item is Exercise => Boolean(item));
-  const selectionPool = profile.trainingStyle === "calisthenics" ? pool.filter((exercise) => exercise.equipment.includes("bodyweight")) : pool;
-  const pick = (pattern: string, fallback: string, offset = 0) => pickByPattern(selectionPool, pattern, fallback, offset);
   const days: TrainingDay[] = Array.from({ length: dayCount }, (_, index) => {
     const variant = Math.floor(index / 2) % 2;
     const upper = compact([
-      pick("horizontal_push", "chest", variant),
-      pick("horizontal_pull", "mid_back", variant),
-      pick("vertical_pull", "lats", variant),
-      pick("vertical_push", "shoulders", variant),
-      profile.trainingStyle === "calisthenics" ? pick("horizontal_push", "triceps", variant + 1) : pick("shoulder_abduction", "side_delts", variant),
-      profile.trainingStyle === "calisthenics" ? pick("vertical_pull", "lats", variant + 1) : pick("elbow_flexion", "biceps", variant),
-      profile.trainingStyle === "calisthenics" ? pick("horizontal_push", "triceps", variant + 2) : pick("elbow_extension", "triceps", variant),
+      pickByPattern(pool, "horizontal_push", "chest", variant),
+      pickByPattern(pool, "horizontal_pull", "mid_back", variant),
+      pickByPattern(pool, "vertical_pull", "lats", variant),
+      pickByPattern(pool, "vertical_push", "shoulders", variant),
+      pickByPattern(pool, "shoulder_abduction", "side_delts", variant),
+      pickByPattern(pool, "elbow_flexion", "biceps", variant),
+      pickByPattern(pool, "elbow_extension", "triceps", variant),
     ]);
     const lower = compact([
-      pick("squat", "quads", variant),
-      pick("hinge", "hamstrings", variant),
-      pick("squat", "glutes", variant + 1),
-      pick("core_anti_extension", "core", variant),
+      pickByPattern(pool, "squat", "quads", variant),
+      pickByPattern(pool, "hinge", "hamstrings", variant),
+      pickByPattern(pool, "squat", "glutes", variant + 1),
+      pickByPattern(pool, "core_anti_extension", "core", variant),
     ]);
     const full = compact([
-      pick("squat", "quads", index),
-      pick("horizontal_push", "chest", index),
-      pick("horizontal_pull", "mid_back", index),
-      pick("hinge", "hamstrings", index),
-      pick("vertical_pull", "lats", index),
-      pick("core_anti_extension", "core", index),
+      pickByPattern(pool, "squat", "quads", index),
+      pickByPattern(pool, "horizontal_push", "chest", index),
+      pickByPattern(pool, "horizontal_pull", "mid_back", index),
+      pickByPattern(pool, "hinge", "hamstrings", index),
+      pickByPattern(pool, "vertical_pull", "lats", index),
+      pickByPattern(pool, "core_anti_extension", "core", index),
     ]);
     const template = split.includes("Upper / Lower") ? (index % 2 === 0 ? upper : lower) : split.includes("Push") ? (index % 3 === 0 ? upper.slice(0, 5) : index % 3 === 1 ? compact([upper[1], upper[2], upper[5], lower[1]]) : lower) : full;
     const unique = [...new Map(template.map((exercise) => [exercise.id, exercise])).values()].slice(0, exerciseLimit);
     return {
       id: `day-${index + 1}`,
-      title: trainingDayTitle(unique),
-      weekday: `جلسه ${nf(index + 1)}`,
+      title: split.includes("Upper / Lower") ? (index % 2 === 0 ? `بالاتنه ${variant === 0 ? "A" : "B"}` : `پایین‌تنه ${variant === 0 ? "A" : "B"}`) : `تمرین ${index + 1}`,
+      weekday: profile.preferredDays[index] ?? weekdayFa[index],
       focus: split,
       warmup: "۵ تا ۸ دقیقه هوازی سبک، سپس دو ست گرم‌کردنی برای حرکت اول.",
       estimatedMinutes: profile.sessionMinutes,
@@ -192,9 +164,9 @@ export function generateTrainingProgram(profile: UserProfile, methodology?: Coac
     methodologyTitle: methodology?.approved && methodology.active ? methodology.title : undefined,
     days,
     rationale: [
-      `این ساختار انتخاب شده چون شما ${nf(profile.daysPerWeek)} روز در هفته زمان تمرین دارید.`,
+      `این ساختار انتخاب شده چون شما ${profile.daysPerWeek} روز در هفته زمان تمرین دارید.`,
       "حرکات با توجه به تجهیزات، سابقه و موارد احتیاطی فیلتر شده‌اند.",
-      "افزایش وزنه فقط وقتی پیشنهاد می‌شود که تکرارهای هدف با شدت مناسب کامل شوند.",
+      "پیشروی وزنه فقط وقتی پیشنهاد می‌شود که تکرارهای هدف با RIR مناسب کامل شوند.",
       methodology?.approved && methodology.active ? `روش فعال مربی (${methodology.title}) روی split، حجم، شدت و اولویت انتخاب حرکت اعمال شده است.` : "روش اختصاصی مربی فعالی انتخاب نشده؛ موتور از قوانین پیش‌فرض استفاده کرده است.",
     ],
     durationWeeks: 4,

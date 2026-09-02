@@ -1,18 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { ActiveWorkoutDraft, BodyMeasurements, CoachMethodology, FoodLog, MealPlan, Reminder, TrainingProgram, UserProfile, WeeklyCheckIn, WorkoutSession } from "@/domain/types";
+import type { CoachMethodology, FoodLog, MealPlan, Reminder, TrainingProgram, UserProfile, WeeklyCheckIn, WorkoutSession } from "@/domain/types";
 import { demoCheckIns, demoFoodLogs, demoMealPlan, demoProfile, demoProgram, demoReminders, demoWorkouts } from "@/data/demo";
 import { demoCoachMethodology } from "@/data/coach-methodologies";
 import { generateTrainingProgram } from "@/domain/training";
 import { generateMealPlan } from "@/domain/meal-plan";
 import { reviewCoachMethodology } from "@/domain/coach-methodology";
-import { applyWorkoutDays, workoutReminders } from "@/domain/workout-schedule";
 
 type DemoAuthState = {
   isAuthenticated: boolean;
   onboardingCompleted: boolean;
-  account?: { phone: string };
+  account?: { email: string; password: string };
 };
 
 export type AppState = {
@@ -22,7 +21,6 @@ export type AppState = {
   mealPlan: MealPlan;
   foodLogs: FoodLog[];
   workouts: WorkoutSession[];
-  activeWorkout?: ActiveWorkoutDraft;
   reminders: Reminder[];
   checkIns: WeeklyCheckIn[];
   coachMethodologies: CoachMethodology[];
@@ -40,7 +38,6 @@ function initialState(): AppState {
     mealPlan: demoMealPlan,
     foodLogs: demoFoodLogs,
     workouts: demoWorkouts,
-    activeWorkout: undefined,
     reminders: demoReminders,
     checkIns: demoCheckIns,
     coachMethodologies: [demoCoachMethodology],
@@ -72,26 +69,25 @@ function normalizeState(parsed: Partial<AppState>, isLegacy = false): AppState {
   return { ...fallback, ...parsed, auth: parsed.auth ?? { isAuthenticated: isLegacy, onboardingCompleted: isLegacy }, user, program, coachMethodologies, activeCoachMethodologyId };
 }
 
-function freshLocalAccount(name: string, phone: string): AppState {
+function freshLocalAccount(name: string, email: string, password: string): AppState {
+  const normalizedEmail = email.trim().toLowerCase();
   const user = normalizeUser({
     ...demoProfile,
     id: `local-${Date.now()}`,
     name: name.trim() || "عضو باشگاه",
-    // شماره در مدل حساب نگهداری می‌شود؛ این مقدار فقط برای سازگاری با مدل فعلی پروفایل است.
-    email: `${phone}@gymcoach.local`,
+    email: normalizedEmail,
     role: "user",
     focusAreas: [],
     injuries: [],
     injuryNotes: "",
   });
   return {
-    auth: { isAuthenticated: true, onboardingCompleted: false, account: { phone } },
+    auth: { isAuthenticated: true, onboardingCompleted: false, account: { email: normalizedEmail, password } },
     user,
     program: generateTrainingProgram(user, demoCoachMethodology),
     mealPlan: generateMealPlan(user),
     foodLogs: [],
     workouts: [],
-    activeWorkout: undefined,
     reminders: [],
     checkIns: [],
     coachMethodologies: [demoCoachMethodology],
@@ -133,14 +129,17 @@ export function useAppStore() {
   return useMemo(() => ({
     ready,
     state,
-    createLocalAccount: (name: string, phone: string) => {
-      const next = freshLocalAccount(name, phone);
+    createLocalAccount: (name: string, email: string, password: string) => {
+      const next = freshLocalAccount(name, email, password);
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       setState(next);
     },
-    loginLocalAccount: (phone: string) => {
+    loginLocalAccount: (email: string, password: string) => {
+      const normalizedEmail = email.trim().toLowerCase();
       const storedAccount = state.auth.account;
-      const matches = storedAccount?.phone === phone;
+      const matches = storedAccount
+        ? storedAccount.email === normalizedEmail && storedAccount.password === password
+        : state.user.email.toLowerCase() === normalizedEmail;
       if (matches) {
         const next = { ...state, auth: { ...state.auth, isAuthenticated: true } };
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
@@ -150,46 +149,8 @@ export function useAppStore() {
     },
     completeOnboarding: (user: UserProfile) => commit((current) => {
       const activeMethodology = current.coachMethodologies.find((methodology) => methodology.id === current.activeCoachMethodologyId && methodology.active && methodology.approved);
-      const completedUser = { ...user, preferredDays: [], preferredTime: "", equipment: ["commercial_gym"] as UserProfile["equipment"] };
+      const completedUser = { ...user, equipment: ["commercial_gym"] as UserProfile["equipment"] };
       return { ...current, auth: { isAuthenticated: true, onboardingCompleted: true }, user: completedUser, program: generateTrainingProgram(completedUser, activeMethodology), mealPlan: generateMealPlan(completedUser) };
-    }),
-    saveWorkoutSchedule: (days: string[], time?: string) => commit((current) => {
-      const program = applyWorkoutDays(current.program, days);
-      const reminders = [
-        ...current.reminders.filter((reminder) => reminder.type !== "workout"),
-        ...workoutReminders(program, days, time),
-      ];
-      return {
-        ...current,
-        user: { ...current.user, preferredDays: days, preferredTime: time ?? "" },
-        program,
-        reminders,
-      };
-    }),
-    rescheduleWorkout: (dayId: string, weekday: string) => commit((current) => {
-      const dayIndex = current.program.days.findIndex((day) => day.id === dayId);
-      if (dayIndex < 0) return current;
-      const preferredDays = [...current.user.preferredDays];
-      preferredDays[dayIndex] = weekday;
-      return {
-        ...current,
-        user: { ...current.user, preferredDays },
-        program: { ...current.program, days: current.program.days.map((day) => day.id === dayId ? { ...day, weekday } : day) },
-        reminders: current.reminders.map((reminder) => reminder.id === `workout-${dayId}` ? { ...reminder, day: weekday } : reminder),
-      };
-    }),
-    saveBodyBaseline: (measurements: Omit<BodyMeasurements, "recordedAt">) => commit((current) => {
-      const bodyBaseline: BodyMeasurements = { ...measurements, recordedAt: new Date().toISOString() };
-      const user: UserProfile = {
-        ...current.user,
-        weightKg: measurements.weightKg ?? current.user.weightKg,
-        waistCm: measurements.waistCm ?? current.user.waistCm,
-        armCm: measurements.armCm ?? current.user.armCm,
-        chestCm: measurements.chestCm ?? current.user.chestCm,
-        thighCm: measurements.thighCm ?? current.user.thighCm,
-        bodyBaseline,
-      };
-      return { ...current, user, mealPlan: generateMealPlan(user) };
     }),
     setUser: (user: UserProfile) => commit((current) => {
       const activeMethodology = current.coachMethodologies.find((methodology) => methodology.id === current.activeCoachMethodologyId && methodology.active);
@@ -214,8 +175,6 @@ export function useAppStore() {
     addReminder: (reminder: Reminder) => commit((current) => ({ ...current, reminders: [reminder, ...current.reminders] })),
     toggleReminder: (id: string) => commit((current) => ({ ...current, reminders: current.reminders.map((reminder) => reminder.id === id ? { ...reminder, active: !reminder.active } : reminder) })),
     addWorkout: (workout: WorkoutSession) => commit((current) => ({ ...current, workouts: [workout, ...current.workouts] })),
-    saveActiveWorkout: (draft: ActiveWorkoutDraft) => commit((current) => ({ ...current, activeWorkout: draft })),
-    clearActiveWorkout: () => commit((current) => ({ ...current, activeWorkout: undefined })),
     addCheckIn: (checkIn: WeeklyCheckIn) => commit((current) => ({ ...current, checkIns: [...current.checkIns, checkIn] })),
   }), [ready, state]);
 }
